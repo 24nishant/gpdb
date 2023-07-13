@@ -61,7 +61,7 @@ CLogicalIndexGet::CLogicalIndexGet(CMemoryPool *mp)
 CLogicalIndexGet::CLogicalIndexGet(CMemoryPool *mp, const IMDIndex *pmdindex,
 								   CTableDescriptor *ptabdesc,
 								   ULONG ulOriginOpId, const CName *pnameAlias,
-								   CColRefArray *pdrgpcrOutput)
+								   CColRefArray *pdrgpcrOutput, ULONG ulResidualPredicateSize)
 	: CLogical(mp),
 	  m_pindexdesc(nullptr),
 	  m_ptabdesc(ptabdesc),
@@ -86,6 +86,8 @@ CLogicalIndexGet::CLogicalIndexGet(CMemoryPool *mp, const IMDIndex *pmdindex,
 	m_pcrsOutput = GPOS_NEW(mp) CColRefSet(mp, pdrgpcrOutput);
 
 	m_pcrsDist = CLogical::PcrsDist(mp, m_ptabdesc, m_pdrgpcrOutput);
+
+	m_ulResidualPredicateSize = ulResidualPredicateSize;
 }
 
 //---------------------------------------------------------------------------
@@ -173,7 +175,7 @@ CLogicalIndexGet::PopCopyWithRemappedColumns(CMemoryPool *mp,
 	m_ptabdesc->AddRef();
 
 	return GPOS_NEW(mp) CLogicalIndexGet(
-		mp, pmdindex, m_ptabdesc, m_ulOriginOpId, pnameAlias, pdrgpcrOutput);
+		mp, pmdindex, m_ptabdesc, m_ulOriginOpId, pnameAlias, pdrgpcrOutput, m_ulResidualPredicateSize);
 }
 
 //---------------------------------------------------------------------------
