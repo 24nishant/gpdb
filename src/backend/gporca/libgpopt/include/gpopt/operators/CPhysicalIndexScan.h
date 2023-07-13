@@ -44,6 +44,9 @@ private:
 	// order
 	COrderSpec *m_pos;
 
+	// count of number of predicate not applicable on the index
+	ULONG m_ulResidualPredicateSize;
+
 public:
 	CPhysicalIndexScan(const CPhysicalIndexScan &) = delete;
 
@@ -51,7 +54,7 @@ public:
 	CPhysicalIndexScan(CMemoryPool *mp, CIndexDescriptor *pindexdesc,
 					   CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
 					   const CName *pnameAlias, CColRefArray *colref_array,
-					   COrderSpec *pos);
+					   COrderSpec *pos, ULONG m_ulResidualPredicateSize);
 
 	// dtor
 	~CPhysicalIndexScan() override;
@@ -103,6 +106,13 @@ public:
 	FInputOrderSensitive() const override
 	{
 		return true;
+	}
+
+	// number of predicate not applicable on the index
+	ULONG
+	ResidualPredicateSize() const
+	{
+		return m_ulResidualPredicateSize;
 	}
 
 	//-------------------------------------------------------------------------------------

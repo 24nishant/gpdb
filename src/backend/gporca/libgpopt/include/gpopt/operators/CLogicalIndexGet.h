@@ -59,6 +59,9 @@ private:
 	// distribution columns (empty for coordinator only tables)
 	CColRefSet *m_pcrsDist;
 
+	// count of number of predicate not applicable on the index
+	ULONG m_ulResidualPredicateSize;
+
 public:
 	CLogicalIndexGet(const CLogicalIndexGet &) = delete;
 
@@ -67,7 +70,8 @@ public:
 
 	CLogicalIndexGet(CMemoryPool *mp, const IMDIndex *pmdindex,
 					 CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
-					 const CName *pnameAlias, CColRefArray *pdrgpcrOutput);
+					 const CName *pnameAlias, CColRefArray *pdrgpcrOutput,
+					 ULONG ulResidualPredicateSize);
 
 	// dtor
 	~CLogicalIndexGet() override;
@@ -140,6 +144,13 @@ public:
 	Pos() const
 	{
 		return m_pos;
+	}
+
+	// number of predicate not applicable on the index
+	ULONG
+	ResidualPredicateSize() const
+	{
+		return m_ulResidualPredicateSize;
 	}
 
 	// operator specific hash function
