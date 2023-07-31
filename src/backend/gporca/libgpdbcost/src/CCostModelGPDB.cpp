@@ -1801,8 +1801,11 @@ CCostModelGPDB::CostIndexScan(CMemoryPool * mp GPOS_UNUSED,
 	// pages that leads to bigger a btree which subsequently leads to more random IO during index lookup.
 	// 2. output tuple cost: this is handled by the Filter on top of IndexScan, if no Filter exists, we add output cost
 	// when we sum-up children cost
-	CDouble dIndexCostConversionFactor =1.0;
 
+	CDouble dIndexCostConversionFactor =
+		pcmgpdb->GetCostModelParams()
+			->PcpLookup(CCostModelParamsGPDB::EcpIndexCostConversionFactor)
+			->Get();
 
 	CDouble dTotalAdditionalMissingPredCost =
 		ulCummulativeMissingPredWeight * dIndexCostConversionFactor;
@@ -1924,7 +1927,11 @@ CCostModelGPDB::CostIndexOnlyScan(CMemoryPool *mp GPOS_UNUSED,	  // mp
 	// Assuming only index idx_ab, exists, then since column 'c'
 	// is also used in the query, 'Index only scan' will not be generated as an
 	// alternate.
-	CDouble dIndexCostConversionFactor =1.0;
+
+	CDouble dIndexCostConversionFactor =
+		pcmgpdb->GetCostModelParams()
+			->PcpLookup(CCostModelParamsGPDB::EcpIndexCostConversionFactor)
+			->Get();
 
 	CDouble dTotalAdditionalCost =
 		ComputeAdditionalMissingIndexWeight(mp, exprhdl, pdrgpcrIndexColumns, stats) *
