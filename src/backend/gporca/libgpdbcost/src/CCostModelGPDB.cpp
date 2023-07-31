@@ -1648,9 +1648,9 @@ CCostModelGPDB::ComputeAdditionalMissingIndexWeight(
 					dMissingIndexColWeight = (ulNoOfColumnsInIndex -ul);
 
 					// Finding NDV of the missing column
-					dNdv = 1;
+					dNdv = CStatistics::CastStats(stats)->GetNDVs(colrefIndexColumns);
 
-					CDouble dTableRows = 1.0;
+					CDouble dTableRows = CStatistics::CastStats(stats)->Rows();
 
 					// Checking if total number of rows in the table are non-zero
 					GPOS_ASSERT(0 != dTableRows);
