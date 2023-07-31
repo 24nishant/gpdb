@@ -638,7 +638,7 @@ explain select i, count(j) from pt2 group by i;
                   <dxl:Filter/>
                   <dxl:Sort SortDiscardDuplicates="false">
                     <dxl:Properties>
-                      <dxl:Cost StartupCost="0" TotalCost="431.000026" Rows="1.000000" Width="16"/>
+                      <dxl:Cost StartupCost="0" TotalCost="431.000030" Rows="1.000000" Width="16"/>
                     </dxl:Properties>
                     <dxl:ProjList>
                       <dxl:ProjElem ColId="0" Alias="i">
@@ -656,7 +656,7 @@ explain select i, count(j) from pt2 group by i;
                     <dxl:LimitOffset/>
                     <dxl:DynamicTableScan SelectorIds="">
                       <dxl:Properties>
-                        <dxl:Cost StartupCost="0" TotalCost="431.000012" Rows="1.000000" Width="16"/>
+                        <dxl:Cost StartupCost="0" TotalCost="431.000015" Rows="1.000000" Width="16"/>
                       </dxl:Properties>
                       <dxl:ProjList>
                         <dxl:ProjElem ColId="0" Alias="i">
