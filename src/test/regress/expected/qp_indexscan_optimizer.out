@@ -16,7 +16,7 @@ explain (costs off) select a from test_index_with_orderby_limit order by a limit
    ->  Gather Motion 3:1  (slice1; segments: 3)
          Merge Key: a
          ->  Limit
-               ->  Index Scan using index_a on test_index_with_orderby_limit
+               ->  Index Only Scan using index_a on test_index_with_orderby_limit
  Optimizer: Pivotal Optimizer (GPORCA)
 (6 rows)
 
@@ -72,7 +72,7 @@ explain (costs off) select b from test_index_with_orderby_limit order by b limit
    ->  Gather Motion 3:1  (slice1; segments: 3)
          Merge Key: b
          ->  Limit
-               ->  Index Scan using index_bda on test_index_with_orderby_limit
+               ->  Index Only Scan using index_bda on test_index_with_orderby_limit
  Optimizer: Pivotal Optimizer (GPORCA)
 (6 rows)
 
@@ -99,7 +99,7 @@ explain (costs off) select a, b from test_index_with_orderby_limit order by a, b
    ->  Gather Motion 3:1  (slice1; segments: 3)
          Merge Key: a, b
          ->  Limit
-               ->  Index Scan using index_ab on test_index_with_orderby_limit
+               ->  Index Only Scan using index_ab on test_index_with_orderby_limit
  Optimizer: Pivotal Optimizer (GPORCA)
 (6 rows)
 
@@ -126,7 +126,7 @@ explain (costs off) select b, d from test_index_with_orderby_limit order by b, d
    ->  Gather Motion 3:1  (slice1; segments: 3)
          Merge Key: b, d
          ->  Limit
-               ->  Index Scan using index_bda on test_index_with_orderby_limit
+               ->  Index Only Scan using index_bda on test_index_with_orderby_limit
  Optimizer: Pivotal Optimizer (GPORCA)
 (6 rows)
 
@@ -240,7 +240,7 @@ explain (costs off) select b, d, a from test_index_with_orderby_limit order by b
    ->  Gather Motion 3:1  (slice1; segments: 3)
          Merge Key: b, d, a
          ->  Limit
-               ->  Index Scan using index_bda on test_index_with_orderby_limit
+               ->  Index Only Scan using index_bda on test_index_with_orderby_limit
  Optimizer: Pivotal Optimizer (GPORCA)
 (6 rows)
 
@@ -324,7 +324,7 @@ explain (costs off) select a  from test_index_with_orderby_limit order by a offs
  Limit
    ->  Gather Motion 3:1  (slice1; segments: 3)
          Merge Key: a
-         ->  Index Scan using index_a on test_index_with_orderby_limit
+         ->  Index Only Scan using index_a on test_index_with_orderby_limit
  Optimizer: Pivotal Optimizer (GPORCA)
 (5 rows)
 
@@ -467,7 +467,7 @@ explain (costs off) select a from test_index_with_orderby_limit order by a desc 
          ->  Limit
                ->  Sort
                      Sort Key: a DESC NULLS LAST
-                     ->  Index Scan using index_a on test_index_with_orderby_limit
+                     ->  Index Only Scan using index_a on test_index_with_orderby_limit
  Optimizer: Pivotal Optimizer (GPORCA)
 (8 rows)
 
@@ -538,7 +538,7 @@ explain (costs off) select a from test_index_with_orderby_limit order by 1 limit
    ->  Gather Motion 3:1  (slice1; segments: 3)
          Merge Key: a
          ->  Limit
-               ->  Index Scan using index_a on test_index_with_orderby_limit
+               ->  Index Only Scan using index_a on test_index_with_orderby_limit
  Optimizer: Pivotal Optimizer (GPORCA)
 (6 rows)
 
