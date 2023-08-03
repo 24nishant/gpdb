@@ -190,17 +190,16 @@ private:
 
 	// create a dynamic operator for a btree index plan
 	static CLogical *
-	PopDynamicBtreeIndexOpConstructor(CMemoryPool *mp, const IMDIndex *pmdindex,
-									  CTableDescriptor *ptabdesc,
-									  ULONG ulOriginOpId, CName *pname,
-									  ULONG ulPartIndex,
-									  CColRefArray *pdrgpcrOutput,
-									  CColRef2dArray *pdrgpdrgpcrPart,
-									  IMdIdArray *partition_mdids, ULONG ulResidualPredicateSize)
+	PopDynamicBtreeIndexOpConstructor(
+		CMemoryPool *mp, const IMDIndex *pmdindex, CTableDescriptor *ptabdesc,
+		ULONG ulOriginOpId, CName *pname, ULONG ulPartIndex,
+		CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrPart,
+		IMdIdArray *partition_mdids, ULONG ulResidualPredicateSize)
 	{
-		return GPOS_NEW(mp) CLogicalDynamicIndexGet(
-			mp, pmdindex, ptabdesc, ulOriginOpId, pname, ulPartIndex,
-			pdrgpcrOutput, pdrgpdrgpcrPart, partition_mdids, ulResidualPredicateSize);
+		return GPOS_NEW(mp)
+			CLogicalDynamicIndexGet(mp, pmdindex, ptabdesc, ulOriginOpId, pname,
+									ulPartIndex, pdrgpcrOutput, pdrgpdrgpcrPart,
+									partition_mdids, ulResidualPredicateSize);
 	}
 
 	//	create a static operator for a btree index plan
@@ -208,10 +207,12 @@ private:
 	PopStaticBtreeIndexOpConstructor(CMemoryPool *mp, const IMDIndex *pmdindex,
 									 CTableDescriptor *ptabdesc,
 									 ULONG ulOriginOpId, CName *pname,
-									 CColRefArray *pdrgpcrOutput, ULONG ulResidualPredicateSize)
+									 CColRefArray *pdrgpcrOutput,
+									 ULONG ulResidualPredicateSize)
 	{
-		return GPOS_NEW(mp) CLogicalIndexGet(
-			mp, pmdindex, ptabdesc, ulOriginOpId, pname, pdrgpcrOutput, ulResidualPredicateSize);
+		return GPOS_NEW(mp)
+			CLogicalIndexGet(mp, pmdindex, ptabdesc, ulOriginOpId, pname,
+							 pdrgpcrOutput, ulResidualPredicateSize);
 	}
 
 	//	produce an expression representing a new btree index path

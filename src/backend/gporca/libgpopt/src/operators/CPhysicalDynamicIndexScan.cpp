@@ -39,7 +39,8 @@ CPhysicalDynamicIndexScan::CPhysicalDynamicIndexScan(
 	ULONG ulOriginOpId, const CName *pnameAlias, CColRefArray *pdrgpcrOutput,
 	ULONG scan_id, CColRef2dArray *pdrgpdrgpcrPart, COrderSpec *pos,
 	IMdIdArray *partition_mdids,
-	ColRefToUlongMapArray *root_col_mapping_per_part, ULONG ulResidualPredicateSize)
+	ColRefToUlongMapArray *root_col_mapping_per_part,
+	ULONG ulResidualPredicateSize)
 	: CPhysicalDynamicScan(mp, ptabdesc, ulOriginOpId, pnameAlias, scan_id,
 						   pdrgpcrOutput, pdrgpdrgpcrPart, partition_mdids,
 						   root_col_mapping_per_part),

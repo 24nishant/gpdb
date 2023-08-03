@@ -107,7 +107,7 @@ public:
 		EcpScalarFuncCost,			  // cost of scalar func
 		EcpIndexOnlyScanTupCostUnit,  // index only scan cost per tuple retrieving
 
-		EcpIndexCostConversionFactor, // Additional cost conversion factor for index & Index only scans
+		EcpIndexCostConversionFactor,  // Additional cost conversion factor for index & Index only scans
 		EcpSentinel
 	};
 
@@ -286,6 +286,7 @@ private:
 
 	// Additional cost conversion factor for index & Index only scan
 	static const CDouble DIndexCostConversionFactor;
+
 public:
 	CCostModelParamsGPDB(CCostModelParamsGPDB &) = delete;
 

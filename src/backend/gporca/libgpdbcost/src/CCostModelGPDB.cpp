@@ -37,9 +37,8 @@
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/operators/CScalarBitmapIndexProbe.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
-#include "naucrates/statistics/CStatisticsUtils.h"
 #include "gpopt/xforms/CXformUtils.h"
-#include "gpopt/base/CColRefTable.h"
+#include "naucrates/statistics/CStatisticsUtils.h"
 
 using namespace gpos;
 using namespace gpdbcost;
@@ -1603,13 +1602,13 @@ CCostModelGPDB::ComputeAdditionalMissingIndexWeight(
 	ULONG ulNoOfColumnsInIndex = pdrgpcrIndexColumns->Size();
 
 	// Finding predicate columns
-	CExpression *pexprIndexCond =
-		exprhdl.PexprScalarRepChild(0);
+	CExpression *pexprIndexCond = exprhdl.PexprScalarRepChild(0);
 	CColRefSet *pcrsUsedPredicate = pexprIndexCond->DeriveUsedColumns();
 
 	// Find all the columns of index which are not present in the predicate.
 	// Eg- index : a,b,c  Predicate: c,d; so Missing index column = a,b
-	CColRefSet *pcrsIndexKeys = GPOS_NEW(mp) CColRefSet(mp, pdrgpcrIndexColumns);
+	CColRefSet *pcrsIndexKeys =
+		GPOS_NEW(mp) CColRefSet(mp, pdrgpcrIndexColumns);
 	pcrsIndexKeys->Difference(pcrsUsedPredicate);
 
 	// Checking if we have any missing index column and
@@ -1639,16 +1638,18 @@ CCostModelGPDB::ComputeAdditionalMissingIndexWeight(
 				// will come out.
 				CColRef *colrefIndexColumns = (*pdrgpcrIndexColumns)[ul];
 
-				if ( CColRef::Equals(colrefIndexColsNoPredCondn, colrefIndexColumns) )
+				if (CColRef::Equals(colrefIndexColsNoPredCondn,
+									colrefIndexColumns))
 				{
 					// Adjusting the weight for the missing index (ulNoOfColumnsInIndex-ul)
 					// For index idx_abc, if column 'a' is missing, then since
 					// it is the most significant index column, so it should have
 					// more weightage.
-					dMissingIndexColWeight = (ulNoOfColumnsInIndex -ul);
+					dMissingIndexColWeight = (ulNoOfColumnsInIndex - ul);
 
 					// Finding NDV of the missing column
-					dNdv = CStatistics::CastStats(stats)->GetNDVs(colrefIndexColumns);
+					dNdv = CStatistics::CastStats(stats)->GetNDVs(
+						colrefIndexColumns);
 
 					CDouble dTableRows = CStatistics::CastStats(stats)->Rows();
 
@@ -1669,13 +1670,11 @@ CCostModelGPDB::ComputeAdditionalMissingIndexWeight(
 					break;
 				}
 			}
-
 		}
-
 	}
 	pcrsIndexKeys->Release();
 
-	return  dCummulativeMissingIndexWeight;
+	return dCummulativeMissingIndexWeight;
 }
 
 //---------------------------------------------------------------------------
@@ -1687,7 +1686,7 @@ CCostModelGPDB::ComputeAdditionalMissingIndexWeight(
 //
 //---------------------------------------------------------------------------
 CCost
-CCostModelGPDB::CostIndexScan(CMemoryPool * mp GPOS_UNUSED,
+CCostModelGPDB::CostIndexScan(CMemoryPool *mp GPOS_UNUSED,
 							  CExpressionHandle &exprhdl,
 							  const CCostModelGPDB *pcmgpdb,
 							  const SCostingInfo *pci)
@@ -1911,13 +1910,15 @@ CCostModelGPDB::CostIndexOnlyScan(CMemoryPool *mp GPOS_UNUSED,	  // mp
 
 	CColRefArray *pdrgpcrIndexColumns = nullptr;
 
-	const IMDRelation *pmdrel =
-		md_accessor->RetrieveRel(CPhysicalIndexOnlyScan::PopConvert(pop)->Ptabdesc()->MDId());
+	const IMDRelation *pmdrel = md_accessor->RetrieveRel(
+		CPhysicalIndexOnlyScan::PopConvert(pop)->Ptabdesc()->MDId());
 
-	const IMDIndex *pmdindex =
-		md_accessor->RetrieveIndex(CPhysicalIndexOnlyScan::PopConvert(pop)->Pindexdesc()->MDId());
+	const IMDIndex *pmdindex = md_accessor->RetrieveIndex(
+		CPhysicalIndexOnlyScan::PopConvert(pop)->Pindexdesc()->MDId());
 
-	pdrgpcrIndexColumns = CXformUtils::PdrgpcrIndexKeys(mp, CPhysicalIndexOnlyScan::PopConvert(pop)->PdrgpcrOutput(), pmdindex, pmdrel);
+	pdrgpcrIndexColumns = CXformUtils::PdrgpcrIndexKeys(
+		mp, CPhysicalIndexOnlyScan::PopConvert(pop)->PdrgpcrOutput(), pmdindex,
+		pmdrel);
 
 	// 1. Total additional cost only includes cost component of 'Missing Index'
 	// columns in the predicate.
@@ -1934,7 +1935,8 @@ CCostModelGPDB::CostIndexOnlyScan(CMemoryPool *mp GPOS_UNUSED,	  // mp
 			->Get();
 
 	CDouble dTotalAdditionalCost =
-		ComputeAdditionalMissingIndexWeight(mp, exprhdl, pdrgpcrIndexColumns, stats) *
+		ComputeAdditionalMissingIndexWeight(mp, exprhdl, pdrgpcrIndexColumns,
+											stats) *
 		dIndexCostConversionFactor;
 
 	pdrgpcrIndexColumns->Release();
@@ -1965,7 +1967,8 @@ CCostModelGPDB::CostIndexOnlyScan(CMemoryPool *mp GPOS_UNUSED,	  // mp
 		ulIncludedColWidth * dIndexOnlyScanTupCostUnit;
 
 	return CCost(pci->NumRebinds() *
-				 (dRowsIndex * dCostPerIndexRow + dIndexScanTupRandomFactor + dTotalAdditionalCost));
+				 (dRowsIndex * dCostPerIndexRow + dIndexScanTupRandomFactor +
+				  dTotalAdditionalCost));
 }
 
 CCost

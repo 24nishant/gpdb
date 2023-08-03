@@ -2530,7 +2530,8 @@ CXformUtils::PexprBuildBtreeIndexPlan(
 	{
 		popLogicalGet = PopStaticBtreeIndexOpConstructor(
 			mp, pmdindex, ptabdesc, ulOriginOpId,
-			GPOS_NEW(mp) CName(mp, CName(alias)), pdrgpcrOutput, ulResidualPredicateSize);
+			GPOS_NEW(mp) CName(mp, CName(alias)), pdrgpcrOutput,
+			ulResidualPredicateSize);
 	}
 
 	// clean up
