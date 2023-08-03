@@ -1141,8 +1141,8 @@ CMDAccessor::Pstats(CMemoryPool *mp, IMDId *rel_mdid, CColRefSet *pcrsHist,
 		BOOL isInserted = colid_width_mapping->Insert(keyColid, valueWidth);
 		if (!isInserted)
 		{
-			GPOS_DELETE (keyColid);
-			GPOS_DELETE (valueWidth);
+			GPOS_DELETE(keyColid);
+			GPOS_DELETE(valueWidth);
 		}
 	}
 
