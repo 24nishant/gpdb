@@ -1818,10 +1818,6 @@ CCostModelGPDB::CostIndexScan(CMemoryPool *mp GPOS_UNUSED,
 
 	pdrgpcrIndexColumns->Release();
 
-	// you will get an array of missing columns in predicate and index columns
-	// From this array, we will find the one in index and predicate.
-	// for any column matched in predicate, we need its position
-
 	CDouble dCostPerIndexRow = ulIndexKeys * dIndexFilterCostUnit +
 							   dTableWidth * dIndexScanTupCostUnit +
 							   ulIncludedColWidth * dIndexOnlyScanTupCostUnit;
@@ -1873,6 +1869,11 @@ CCostModelGPDB::CostIndexOnlyScan(CMemoryPool *mp GPOS_UNUSED,	  // mp
 	ULONG ulIndexKeys;
 	IStatistics *stats = nullptr;
 
+	const COptCtxt *poctxt = COptCtxt::PoctxtFromTLS();
+	CMDAccessor *md_accessor = poctxt->Pmda();
+
+	CColRefArray *pdrgpcrIndexColumns = nullptr;
+
 	// Index's INCLUDE columns adds to the width of the index and thus adds I/O
 	// cost per index row. Account for that cost in dCostPerIndexRow.
 	CColumnDescriptorArray *indexIncludedArray = nullptr;
@@ -1885,6 +1886,15 @@ CCostModelGPDB::CostIndexOnlyScan(CMemoryPool *mp GPOS_UNUSED,	  // mp
 		indexIncludedArray = CPhysicalIndexOnlyScan::PopConvert(pop)
 								 ->Pindexdesc()
 								 ->PdrgpcoldescIncluded();
+		const IMDRelation *pmdrel = md_accessor->RetrieveRel(
+			CPhysicalIndexOnlyScan::PopConvert(pop)->Ptabdesc()->MDId());
+
+		const IMDIndex *pmdindex = md_accessor->RetrieveIndex(
+			CPhysicalIndexOnlyScan::PopConvert(pop)->Pindexdesc()->MDId());
+
+		pdrgpcrIndexColumns = CXformUtils::PdrgpcrIndexKeys(
+			mp, CPhysicalIndexOnlyScan::PopConvert(pop)->PdrgpcrOutput(),
+			pmdindex, pmdrel);
 	}
 	else
 	{
@@ -1896,6 +1906,17 @@ CCostModelGPDB::CostIndexOnlyScan(CMemoryPool *mp GPOS_UNUSED,	  // mp
 		indexIncludedArray = CPhysicalDynamicIndexOnlyScan::PopConvert(pop)
 								 ->Pindexdesc()
 								 ->PdrgpcoldescIncluded();
+		const IMDRelation *pmdrel = md_accessor->RetrieveRel(
+			CPhysicalDynamicIndexOnlyScan::PopConvert(pop)->Ptabdesc()->MDId());
+
+		const IMDIndex *pmdindex = md_accessor->RetrieveIndex(
+			CPhysicalDynamicIndexOnlyScan::PopConvert(pop)
+				->Pindexdesc()
+				->MDId());
+
+		pdrgpcrIndexColumns = CXformUtils::PdrgpcrIndexKeys(
+			mp, CPhysicalDynamicIndexOnlyScan::PopConvert(pop)->PdrgpcrOutput(),
+			pmdindex, pmdrel);
 	}
 
 	ULONG ulIncludedColWidth = 0;
@@ -1904,21 +1925,6 @@ CCostModelGPDB::CostIndexOnlyScan(CMemoryPool *mp GPOS_UNUSED,	  // mp
 		ulIncludedColWidth += (*indexIncludedArray)[ul]->Width();
 	}
 
-	// Extracting Index columns for additional cost computation
-	const COptCtxt *poctxt = COptCtxt::PoctxtFromTLS();
-	CMDAccessor *md_accessor = poctxt->Pmda();
-
-	CColRefArray *pdrgpcrIndexColumns = nullptr;
-
-	const IMDRelation *pmdrel = md_accessor->RetrieveRel(
-		CPhysicalIndexOnlyScan::PopConvert(pop)->Ptabdesc()->MDId());
-
-	const IMDIndex *pmdindex = md_accessor->RetrieveIndex(
-		CPhysicalIndexOnlyScan::PopConvert(pop)->Pindexdesc()->MDId());
-
-	pdrgpcrIndexColumns = CXformUtils::PdrgpcrIndexKeys(
-		mp, CPhysicalIndexOnlyScan::PopConvert(pop)->PdrgpcrOutput(), pmdindex,
-		pmdrel);
 
 	// 1. Total additional cost only includes cost component of 'Missing Index'
 	// columns in the predicate.
