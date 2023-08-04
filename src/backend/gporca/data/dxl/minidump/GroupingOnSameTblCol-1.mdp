@@ -11021,7 +11021,7 @@ group  by item.i_item_id, item.i_item_desc, item.i_current_price;
     <dxl:Plan Id="0" SpaceSize="98">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="458.428055" Rows="3.941034" Width="127"/>
+          <dxl:Cost StartupCost="0" TotalCost="458.428195" Rows="3.941034" Width="127"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="1" Alias="i_item_id">
@@ -11038,7 +11038,7 @@ group  by item.i_item_id, item.i_item_desc, item.i_current_price;
         <dxl:SortingColumnList/>
         <dxl:Aggregate AggregationStrategy="Hashed" StreamSafe="false">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="458.425807" Rows="3.941034" Width="127"/>
+            <dxl:Cost StartupCost="0" TotalCost="458.425948" Rows="3.941034" Width="127"/>
           </dxl:Properties>
           <dxl:GroupingColumns>
             <dxl:GroupingColumn ColId="1"/>
@@ -11059,7 +11059,7 @@ group  by item.i_item_id, item.i_item_desc, item.i_current_price;
           <dxl:Filter/>
           <dxl:RedistributeMotion InputSegments="0,1" OutputSegments="0,1">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="458.424873" Rows="3.941034" Width="127"/>
+              <dxl:Cost StartupCost="0" TotalCost="458.425014" Rows="3.941034" Width="127"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="1" Alias="i_item_id">
@@ -11087,7 +11087,7 @@ group  by item.i_item_id, item.i_item_desc, item.i_current_price;
             </dxl:HashExprList>
             <dxl:Aggregate AggregationStrategy="Sorted" StreamSafe="false">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="458.424090" Rows="3.941034" Width="127"/>
+                <dxl:Cost StartupCost="0" TotalCost="458.424231" Rows="3.941034" Width="127"/>
               </dxl:Properties>
               <dxl:GroupingColumns>
                 <dxl:GroupingColumn ColId="1"/>

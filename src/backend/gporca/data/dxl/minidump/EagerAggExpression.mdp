@@ -3328,7 +3328,7 @@
     <dxl:Plan Id="0" SpaceSize="44">
       <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="13815.727204" Rows="999.999998" Width="4"/>
+          <dxl:Cost StartupCost="0" TotalCost="13735.027807" Rows="999.999998" Width="4"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="20" Alias="min">
@@ -3339,7 +3339,7 @@
         <dxl:SortingColumnList/>
         <dxl:Result>
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="13815.712297" Rows="999.999998" Width="4"/>
+            <dxl:Cost StartupCost="0" TotalCost="13735.012900" Rows="999.999998" Width="4"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="20" Alias="min">
@@ -3350,7 +3350,7 @@
           <dxl:OneTimeFilter/>
           <dxl:Aggregate AggregationStrategy="Hashed" StreamSafe="false">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="13815.712297" Rows="999.999998" Width="4"/>
+              <dxl:Cost StartupCost="0" TotalCost="13735.012900" Rows="999.999998" Width="4"/>
             </dxl:Properties>
             <dxl:GroupingColumns>
               <dxl:GroupingColumn ColId="1"/>
@@ -3373,7 +3373,7 @@
             <dxl:Filter/>
             <dxl:HashJoin JoinType="Inner">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="11548.210202" Rows="56476687.387047" Width="8"/>
+                <dxl:Cost StartupCost="0" TotalCost="11467.510805" Rows="56476687.387047" Width="8"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="1" Alias="g1">

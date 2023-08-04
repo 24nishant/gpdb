@@ -822,7 +822,7 @@ AND
     <dxl:Plan Id="0" SpaceSize="692">
       <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="false" OuterRefAsParam="false">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="1373.914755" Rows="512.000000" Width="106"/>
+          <dxl:Cost StartupCost="0" TotalCost="1373.915341" Rows="512.000000" Width="106"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="rolname">
@@ -949,7 +949,7 @@ AND
         </dxl:JoinFilter>
         <dxl:Aggregate AggregationStrategy="Sorted" StreamSafe="false">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="511.691310" Rows="64.000000" Width="82"/>
+            <dxl:Cost StartupCost="0" TotalCost="511.691896" Rows="64.000000" Width="82"/>
           </dxl:Properties>
           <dxl:GroupingColumns>
             <dxl:GroupingColumn ColId="0"/>
@@ -1110,7 +1110,7 @@ AND
           <dxl:Filter/>
           <dxl:Aggregate AggregationStrategy="Sorted" StreamSafe="false">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="511.687322" Rows="10.240000" Width="102"/>
+              <dxl:Cost StartupCost="0" TotalCost="511.687908" Rows="10.240000" Width="102"/>
             </dxl:Properties>
             <dxl:GroupingColumns>
               <dxl:GroupingColumn ColId="0"/>
