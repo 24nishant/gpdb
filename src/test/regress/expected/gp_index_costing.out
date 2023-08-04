@@ -45,7 +45,7 @@ drop index idx_foo_ba;
 set optimizer_enable_indexscan to off;
 CREATE INDEX idx_foo_abc ON foo USING btree(a,b,c);
 CREATE INDEX idx_foo_cba ON foo USING btree(c,b,a);
-analyze foo;
+vacuum analyze foo;
     --  Index idx_foo_abc should be selected
 explain select * from foo where a=1;
                                  QUERY PLAN
@@ -110,6 +110,53 @@ explain select * from bar_PT join foo on bar_PT.b =foo.b;
  Gather Motion 3:1  (slice1; segments: 3)  (cost=1.15..7.34 rows=5 width=24)
    ->  Hash Join  (cost=1.15..7.27 rows=2 width=24)
          Hash Cond: (bar_pt_1_prt_1.b = foo.b)
+         ->  Append  (cost=0.00..6.09 rows=6 width=12)
+               ->  Seq Scan on bar_pt_1_prt_1  (cost=0.00..1.01 rows=1 width=12)
+               ->  Seq Scan on bar_pt_1_prt_2  (cost=0.00..1.01 rows=1 width=12)
+               ->  Seq Scan on bar_pt_1_prt_3  (cost=0.00..1.01 rows=1 width=12)
+               ->  Seq Scan on bar_pt_1_prt_4  (cost=0.00..1.01 rows=1 width=12)
+               ->  Seq Scan on bar_pt_1_prt_5  (cost=0.00..1.01 rows=1 width=12)
+               ->  Seq Scan on bar_pt_1_prt_6  (cost=0.00..1.01 rows=1 width=12)
+         ->  Hash  (cost=1.08..1.08 rows=5 width=12)
+               ->  Broadcast Motion 3:3  (slice2; segments: 3)  (cost=0.00..1.08 rows=5 width=12)
+                     ->  Seq Scan on foo  (cost=0.00..1.02 rows=2 width=12)
+ Optimizer: Postgres query optimizer
+(14 rows)
+
+drop index idx_bar_PT_ab;
+drop index idx_bar_PT_ba;
+-- 1.4 Test case for dynamic index only scans
+CREATE INDEX idx_bar_PT_abc ON bar_PT USING btree(a,b,c);
+CREATE INDEX idx_bar_PT_cba ON bar_PT USING btree(c,b,a);
+vacuum analyze bar_PT;
+    --  Index idx_bar_PT_abc should be selected
+explain select * from bar_PT join foo on bar_PT.a =foo.a;
+                                        QUERY PLAN                                         
+-------------------------------------------------------------------------------------------
+ Gather Motion 3:1  (slice1; segments: 3)  (cost=1.04..7.23 rows=5 width=24)
+   ->  Hash Join  (cost=1.04..7.16 rows=2 width=24)
+         Hash Cond: (bar_pt_1_prt_1.a = foo.a)
+         ->  Append  (cost=0.00..6.09 rows=6 width=12)
+               Partition Selectors: $0
+               ->  Seq Scan on bar_pt_1_prt_1  (cost=0.00..1.01 rows=1 width=12)
+               ->  Seq Scan on bar_pt_1_prt_2  (cost=0.00..1.01 rows=1 width=12)
+               ->  Seq Scan on bar_pt_1_prt_3  (cost=0.00..1.01 rows=1 width=12)
+               ->  Seq Scan on bar_pt_1_prt_4  (cost=0.00..1.01 rows=1 width=12)
+               ->  Seq Scan on bar_pt_1_prt_5  (cost=0.00..1.01 rows=1 width=12)
+               ->  Seq Scan on bar_pt_1_prt_6  (cost=0.00..1.01 rows=1 width=12)
+         ->  Hash  (cost=1.02..1.02 rows=2 width=12)
+               ->  Partition Selector (selector id: $0)  (cost=0.00..1.02 rows=2 width=12)
+                     ->  Seq Scan on foo  (cost=0.00..1.02 rows=2 width=12)
+ Optimizer: Postgres query optimizer
+(15 rows)
+
+    --  Index idx_bar_PT_cba should be selected
+explain select * from bar_PT join foo on bar_PT.c =foo.c;
+                                            QUERY PLAN                                            
+--------------------------------------------------------------------------------------------------
+ Gather Motion 3:1  (slice1; segments: 3)  (cost=1.15..7.34 rows=5 width=24)
+   ->  Hash Join  (cost=1.15..7.27 rows=2 width=24)
+         Hash Cond: (bar_pt_1_prt_1.c = foo.c)
          ->  Append  (cost=0.00..6.09 rows=6 width=12)
                ->  Seq Scan on bar_pt_1_prt_1  (cost=0.00..1.01 rows=1 width=12)
                ->  Seq Scan on bar_pt_1_prt_2  (cost=0.00..1.01 rows=1 width=12)

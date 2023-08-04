@@ -45,7 +45,7 @@ drop index idx_foo_ba;
 set optimizer_enable_indexscan to off;
 CREATE INDEX idx_foo_abc ON foo USING btree(a,b,c);
 CREATE INDEX idx_foo_cba ON foo USING btree(c,b,a);
-analyze foo;
+vacuum analyze foo;
     --  Index idx_foo_abc should be selected
 explain select * from foo where a=1;
                                     QUERY PLAN
@@ -107,6 +107,41 @@ explain select * from bar_PT join foo on bar_PT.b =foo.b;
                ->  Seq Scan on foo  (cost=0.00..431.00 rows=2 width=12)
          ->  Dynamic Index Scan on idx_bar_pt_ba on bar_pt  (cost=0.00..30.00 rows=1 width=12)
                Index Cond: (b = foo.b)
+               Number of partitions to scan: 6 (out of 6)
+ Optimizer: Pivotal Optimizer (GPORCA)
+(9 rows)
+
+drop index idx_bar_PT_ab;
+drop index idx_bar_PT_ba;
+-- 1.4 Test case for dynamic index only scans
+CREATE INDEX idx_bar_PT_abc ON bar_PT USING btree(a,b,c);
+CREATE INDEX idx_bar_PT_cba ON bar_PT USING btree(c,b,a);
+vacuum analyze bar_PT;
+    --  Index idx_bar_PT_abc should be selected
+explain select * from bar_PT join foo on bar_PT.a =foo.a;
+                                             QUERY PLAN                                              
+-----------------------------------------------------------------------------------------------------
+ Gather Motion 3:1  (slice1; segments: 3)  (cost=0.00..461.00 rows=5 width=24)
+   ->  Nested Loop  (cost=0.00..461.00 rows=2 width=24)
+         Join Filter: true
+         ->  Seq Scan on foo  (cost=0.00..431.00 rows=2 width=12)
+         ->  Dynamic Index Only Scan on idx_bar_pt_abc on bar_pt  (cost=0.00..30.00 rows=1 width=12)
+               Index Cond: (a = foo.a)
+               Number of partitions to scan: 6 (out of 6)
+ Optimizer: Pivotal Optimizer (GPORCA)
+(8 rows)
+
+    --  Index idx_bar_PT_cba should be selected
+explain select * from bar_PT join foo on bar_PT.c =foo.c;
+                                             QUERY PLAN                                              
+-----------------------------------------------------------------------------------------------------
+ Gather Motion 3:1  (slice1; segments: 3)  (cost=0.00..461.00 rows=5 width=24)
+   ->  Nested Loop  (cost=0.00..461.00 rows=2 width=24)
+         Join Filter: true
+         ->  Broadcast Motion 3:3  (slice2; segments: 3)  (cost=0.00..431.00 rows=5 width=12)
+               ->  Seq Scan on foo  (cost=0.00..431.00 rows=2 width=12)
+         ->  Dynamic Index Only Scan on idx_bar_pt_cba on bar_pt  (cost=0.00..30.00 rows=1 width=12)
+               Index Cond: (c = foo.c)
                Number of partitions to scan: 6 (out of 6)
  Optimizer: Pivotal Optimizer (GPORCA)
 (9 rows)

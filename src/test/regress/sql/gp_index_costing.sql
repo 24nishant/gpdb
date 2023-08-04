@@ -34,7 +34,7 @@ drop index idx_foo_ba;
 set optimizer_enable_indexscan to off;
 CREATE INDEX idx_foo_abc ON foo USING btree(a,b,c);
 CREATE INDEX idx_foo_cba ON foo USING btree(c,b,a);
-analyze foo;
+vacuum analyze foo;
     --  Index idx_foo_abc should be selected
 explain select * from foo where a=1;
     --  Index idx_foo_cba should be selected
@@ -59,9 +59,19 @@ analyze bar_PT;
 explain select * from bar_PT join foo on bar_PT.a =foo.a;
     --  Index idx_bar_PT_ba should be selected
 explain select * from bar_PT join foo on bar_PT.b =foo.b;
+drop index idx_bar_PT_ab;
+drop index idx_bar_PT_ba;
+
+-- 1.4 Test case for dynamic index only scans
+CREATE INDEX idx_bar_PT_abc ON bar_PT USING btree(a,b,c);
+CREATE INDEX idx_bar_PT_cba ON bar_PT USING btree(c,b,a);
+vacuum analyze bar_PT;
+    --  Index idx_bar_PT_abc should be selected
+explain select * from bar_PT join foo on bar_PT.a =foo.a;
+    --  Index idx_bar_PT_cba should be selected
+explain select * from bar_PT join foo on bar_PT.c =foo.c;
 drop table if exists foo;
 drop table if exists bar_PT;
-
 
 ------------------------------------------------
 -- Scenario2: Missing predicate column in index.
