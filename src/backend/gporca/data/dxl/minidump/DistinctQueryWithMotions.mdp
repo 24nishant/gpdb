@@ -318,7 +318,7 @@
     <dxl:Plan Id="0" SpaceSize="38">
       <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="431.007127" Rows="40.000000" Width="12"/>
+          <dxl:Cost StartupCost="0" TotalCost="431.007097" Rows="40.000000" Width="12"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="10" Alias="count">
@@ -332,7 +332,7 @@
         <dxl:SortingColumnList/>
         <dxl:Aggregate AggregationStrategy="Hashed" StreamSafe="false">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="431.005338" Rows="40.000000" Width="12"/>
+            <dxl:Cost StartupCost="0" TotalCost="431.005308" Rows="40.000000" Width="12"/>
           </dxl:Properties>
           <dxl:GroupingColumns>
             <dxl:GroupingColumn ColId="9"/>
@@ -357,7 +357,7 @@
           <dxl:Filter/>
           <dxl:RedistributeMotion InputSegments="0,1,2" OutputSegments="0,1,2">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="431.003630" Rows="40.000000" Width="8"/>
+              <dxl:Cost StartupCost="0" TotalCost="431.003601" Rows="40.000000" Width="8"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="1" Alias="b">
@@ -376,7 +376,7 @@
             </dxl:HashExprList>
             <dxl:Aggregate AggregationStrategy="Sorted" StreamSafe="false">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="431.003296" Rows="40.000000" Width="8"/>
+                <dxl:Cost StartupCost="0" TotalCost="431.003267" Rows="40.000000" Width="8"/>
               </dxl:Properties>
               <dxl:GroupingColumns>
                 <dxl:GroupingColumn ColId="9"/>
@@ -393,7 +393,7 @@
               <dxl:Filter/>
               <dxl:Sort SortDiscardDuplicates="false">
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="431.003130" Rows="40.000000" Width="8"/>
+                  <dxl:Cost StartupCost="0" TotalCost="431.003100" Rows="40.000000" Width="8"/>
                 </dxl:Properties>
                 <dxl:ProjList>
                   <dxl:ProjElem ColId="1" Alias="b">
@@ -412,7 +412,7 @@
                 <dxl:LimitOffset/>
                 <dxl:RedistributeMotion InputSegments="0,1,2" OutputSegments="0,1,2">
                   <dxl:Properties>
-                    <dxl:Cost StartupCost="0" TotalCost="431.000870" Rows="40.000000" Width="8"/>
+                    <dxl:Cost StartupCost="0" TotalCost="431.000840" Rows="40.000000" Width="8"/>
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="1" Alias="b">
@@ -437,7 +437,7 @@
                   </dxl:HashExprList>
                   <dxl:TableScan>
                     <dxl:Properties>
-                      <dxl:Cost StartupCost="0" TotalCost="431.000337" Rows="40.000000" Width="8"/>
+                      <dxl:Cost StartupCost="0" TotalCost="431.000308" Rows="40.000000" Width="8"/>
                     </dxl:Properties>
                     <dxl:ProjList>
                       <dxl:ProjElem ColId="1" Alias="b">

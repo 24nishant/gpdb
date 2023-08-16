@@ -1,5 +1,6 @@
 --
--- Test Cases to check Index scan, Index Only scan and Dynamic Index scan costing
+-- Test Cases to check Index scan, Index Only scan,
+-- Dynamic Index scan & Dynamic Index only scan costing
 --
 ---------------------------------------------------------------------
 -- Scenario1: Verify impact of missing index column in predicate,

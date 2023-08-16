@@ -1960,7 +1960,7 @@ select product_id,concat('#attribute_'||attribute_id::varchar||':'||attribute) a
     <dxl:Plan Id="0" SpaceSize="1">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="431.033403" Rows="22.000000" Width="12"/>
+          <dxl:Cost StartupCost="0" TotalCost="431.034876" Rows="22.000000" Width="12"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="product_id">
@@ -1974,7 +1974,7 @@ select product_id,concat('#attribute_'||attribute_id::varchar||':'||attribute) a
         <dxl:SortingColumnList/>
         <dxl:Aggregate AggregationStrategy="Sorted" StreamSafe="false">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="431.032217" Rows="22.000000" Width="12"/>
+            <dxl:Cost StartupCost="0" TotalCost="431.033691" Rows="22.000000" Width="12"/>
           </dxl:Properties>
           <dxl:GroupingColumns>
             <dxl:GroupingColumn ColId="0"/>
@@ -2010,7 +2010,7 @@ select product_id,concat('#attribute_'||attribute_id::varchar||':'||attribute) a
           <dxl:Filter/>
           <dxl:Sort SortDiscardDuplicates="false">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="431.031391" Rows="94.000000" Width="16"/>
+              <dxl:Cost StartupCost="0" TotalCost="431.032865" Rows="94.000000" Width="16"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="0" Alias="product_id">
@@ -2031,7 +2031,7 @@ select product_id,concat('#attribute_'||attribute_id::varchar||':'||attribute) a
             <dxl:LimitOffset/>
             <dxl:RedistributeMotion InputSegments="0,1" OutputSegments="0,1">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="431.007708" Rows="94.000000" Width="16"/>
+                <dxl:Cost StartupCost="0" TotalCost="431.009181" Rows="94.000000" Width="16"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="0" Alias="product_id">
@@ -2053,7 +2053,7 @@ select product_id,concat('#attribute_'||attribute_id::varchar||':'||attribute) a
               </dxl:HashExprList>
               <dxl:TableScan>
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="431.003955" Rows="94.000000" Width="16"/>
+                  <dxl:Cost StartupCost="0" TotalCost="431.005428" Rows="94.000000" Width="16"/>
                 </dxl:Properties>
                 <dxl:ProjList>
                   <dxl:ProjElem ColId="0" Alias="product_id">

@@ -2471,7 +2471,22 @@ CXformUtils::PexprBuildBtreeIndexPlan(
 		CUtils::PcrsExtractColumns(mp, pdrgpexprIndex);
 	outer_refs_in_index_get->Intersection(outer_refs);
 
-	ULONG ulResidualPredicateSize = pdrgpexprResidual->Size();
+
+	// Using ulResidualPredicateSize, a count of predicates, not applicable on
+	// index columns is maintained. This, count is used in costing index scans.
+	// In a case, where there is no predicate on the index columns but still an
+	// Index scan is created (Eg: Order by some index columns), then this count
+	// is not valid for costing.
+	// eg: explain select a from foo order by a limit 10; {idx_a on table},
+	// pdrgpexprResidual->size() is > 0, but (pdrgpexprIndex->Size()=0)
+	// missing predicate size is taken as zero.
+
+	ULONG ulResidualPredicateSize = 0;
+	if (pdrgpexprIndex->Size() > 0)
+	{
+		ulResidualPredicateSize = pdrgpexprResidual->Size();
+	}
+
 	// exit early if:
 	// (1) there are no index-able predicates or
 	// (2) there are no outer references in index-able predicates

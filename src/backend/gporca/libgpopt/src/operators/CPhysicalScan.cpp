@@ -256,13 +256,13 @@ CPhysicalScan::ComputeTableStats(CMemoryPool *mp)
 	CColRefSet *pcrsHist = GPOS_NEW(mp) CColRefSet(mp);
 	CColRefSet *pcrsWidth = GPOS_NEW(mp) CColRefSet(mp, m_pdrgpcrOutput);
 
-	// All table columns, excepts system columns are included
-	// for generation of Histogram.
+	// Extracting all used table columns for histogram generation.
 	CColRefSetIter crsiHist(*pcrsWidth);
 	while (crsiHist.Advance())
 	{
 		CColRef *colref = crsiHist.Pcr();
-		if (!colref->IsSystemCol())
+
+		if (CColRef::EUsed == colref->GetUsage() && !colref->IsSystemCol())
 		{
 			pcrsHist->Include(colref);
 		}

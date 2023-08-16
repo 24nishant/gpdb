@@ -422,7 +422,7 @@
     <dxl:Plan Id="0" SpaceSize="3363">
       <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="862.001247" Rows="1.000000" Width="20"/>
+          <dxl:Cost StartupCost="0" TotalCost="862.001246" Rows="1.000000" Width="20"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="r1">
@@ -540,7 +540,7 @@
           </dxl:TableScan>
           <dxl:BroadcastMotion InputSegments="0,1,2" OutputSegments="0,1,2">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="431.000258" Rows="3.000000" Width="12"/>
+              <dxl:Cost StartupCost="0" TotalCost="431.000257" Rows="3.000000" Width="12"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="14" Alias="s3">
