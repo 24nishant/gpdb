@@ -204,9 +204,9 @@ private:
 
 	// Calculating additional columns weight for mismatch in index columns
 	// wrt predicate columns, for an Index Scan & Index Only Scan.
-	static CDouble ComputeAdditionalMissingIndexWeight(
-		CMemoryPool *mp, CExpressionHandle &exprhdl,
-		CColRefArray *pdrgpcrIndexColumns, IStatistics *stats);
+	static CDouble ComputeMissingIndexWeight(CExpressionHandle &exprhdl,
+											 CColRefArray *pdrgpcrIndexColumns,
+											 IStatistics *stats);
 
 public:
 	// ctor
