@@ -2112,7 +2112,7 @@ CPredicateUtils::ExtractIndexPredicates(
 	CMemoryPool *mp, CMDAccessor *md_accessor,
 	CExpressionArray *pdrgpexprPredicate, const IMDIndex *pmdindex,
 	CColRefArray *pdrgpcrIndex, CExpressionArray *pdrgpexprIndex,
-	CExpressionArray *pdrgpexprResidual,
+	CExpressionArray *pdrgpexprResidual, ULONG &ulUnsupportedPredCount,
 	CColRefSet *
 		pcrsAcceptedOuterRefs,	// outer refs that are acceptable in an index predicate
 	BOOL allowArrayCmpIndexQual)
@@ -2182,6 +2182,7 @@ CPredicateUtils::ExtractIndexPredicates(
 			{
 				// not a supported predicate
 				pdrgpexprTarget = pdrgpexprResidual;
+				ulUnsupportedPredCount = ulUnsupportedPredCount + 1;
 			}
 		}
 

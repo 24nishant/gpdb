@@ -204,9 +204,19 @@ private:
 
 	// Calculating additional columns weight for mismatch in index columns
 	// wrt predicate columns, for an Index Scan & Index Only Scan.
-	static CDouble ComputeMissingIndexWeight(CExpressionHandle &exprhdl,
-											 CColRefArray *pdrgpcrIndexColumns,
-											 IStatistics *stats);
+	static CDouble ComputeUnusedIndexWeight(CExpressionHandle &exprhdl,
+											CColRefArray *pdrgpcrIndexColumns,
+											IStatistics *stats);
+
+	// Get  count of index keys, width of included col, array of index columns
+	// and table statistics for Index Scan, Index only scan, Dynamic Index scan
+	// & Dynamic Index only scan
+	template <typename T>
+	static void GetCommonIndexData(T *ptr, ULONG &ulIndexKeys,
+								   ULONG &ulIncludedColWidth,
+								   CColRefArray *&pdrgpcrIndexColumns,
+								   IStatistics *&stats,
+								   CMDAccessor *md_accessor, CMemoryPool *mp);
 
 public:
 	// ctor

@@ -2464,9 +2464,11 @@ CXformUtils::PexprBuildBtreeIndexPlan(
 		PdrgpcrIndexKeys(mp, pdrgpcrOutput, pmdindex, pmdrel);
 	CExpressionArray *pdrgpexprIndex = GPOS_NEW(mp) CExpressionArray(mp);
 	CExpressionArray *pdrgpexprResidual = GPOS_NEW(mp) CExpressionArray(mp);
+	ULONG ulUnsupportedPredCount = 0;
+
 	CPredicateUtils::ExtractIndexPredicates(
 		mp, md_accessor, pdrgpexprConds, pmdindex, pdrgppcrIndexCols,
-		pdrgpexprIndex, pdrgpexprResidual, outer_refs);
+		pdrgpexprIndex, pdrgpexprResidual, ulUnsupportedPredCount, outer_refs);
 	CColRefSet *outer_refs_in_index_get =
 		CUtils::PcrsExtractColumns(mp, pdrgpexprIndex);
 	outer_refs_in_index_get->Intersection(outer_refs);
@@ -2474,17 +2476,28 @@ CXformUtils::PexprBuildBtreeIndexPlan(
 
 	// Using ulResidualPredicateSize, a count of predicates, not applicable on
 	// index columns is maintained. This, count is used in costing index scans.
-	// In a case, where there is no predicate on the index columns but still an
-	// Index scan is created (Eg: Order by some index columns), then this count
+	// 1. In a case, where there is no predicate on the index columns but still
+	// an Index scan is created (Eg: Order by some index columns), then this count
 	// is not valid for costing.
 	// eg: explain select a from foo order by a limit 10; {idx_a on table},
 	// pdrgpexprResidual->size() is > 0, but (pdrgpexprIndex->Size()=0)
-	// missing predicate size is taken as zero.
+	// unused(not present in index) predicate size is taken as zero.
+	// 2. All the unsupported predicates on the index are also removed
+	// eg
+	//       create table j1 (a1 int, b1 int, primary key(a1,b1));
+	//      create table j2 (a2 int, b2 int, primary key(a2,b2));
+
+	// 		explain (costs off) select * from j1
+	//      inner join j2 on j1.a1 = j2.a2 and j1.b1 = j2.b2
+	//      where j1.a1 % 1000 = 1 and j2.a2 % 1000 = 1;
+	// here both the conditions in the 'where' clause are - 'not supported index
+	// predicate'.
 
 	ULONG ulResidualPredicateSize = 0;
 	if (pdrgpexprIndex->Size() > 0)
 	{
-		ulResidualPredicateSize = pdrgpexprResidual->Size();
+		ulResidualPredicateSize =
+			pdrgpexprResidual->Size() - ulUnsupportedPredCount;
 	}
 
 	// exit early if:
@@ -2853,6 +2866,8 @@ CXformUtils::PexprBitmapSelectBestIndex(
 	}
 
 	const ULONG ulIndexes = pmdrel->IndexCount();
+	ULONG ulUnsupportedPredCount = 0;
+
 	for (ULONG ul = 0; ul < ulIndexes; ul++)
 	{
 		const IMDIndex *pmdindex =
@@ -2874,8 +2889,8 @@ CXformUtils::PexprBitmapSelectBestIndex(
 
 			CPredicateUtils::ExtractIndexPredicates(
 				mp, md_accessor, pdrgpexprScalar, pmdindex, pdrgpcrIndexCols,
-				pdrgpexprIndex, pdrgpexprResidual, pcrsOuterRefs,
-				considerBitmapAltForArrayCmp);
+				pdrgpexprIndex, pdrgpexprResidual, ulUnsupportedPredCount,
+				pcrsOuterRefs, considerBitmapAltForArrayCmp);
 
 			pdrgpexprScalar->Release();
 
