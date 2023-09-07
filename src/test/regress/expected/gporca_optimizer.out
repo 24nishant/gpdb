@@ -14301,19 +14301,19 @@ CREATE TABLE dist_tab_b (a char(15), b bigint) DISTRIBUTED BY(a);
 INSERT INTO dist_tab_b VALUES('1 ', 1), ('2  ', 2), ('3    ', 3);
 EXPLAIN CREATE TABLE result_tab AS
 	(SELECT a.a, b.b FROM dist_tab_a a LEFT JOIN dist_tab_b b ON a.a=b.a) DISTRIBUTED BY(a);
-                                              QUERY PLAN                                               
--------------------------------------------------------------------------------------------------------
- Result  (cost=0.00..0.00 rows=0 width=0)
-   ->  Redistribute Motion 3:3  (slice1; segments: 3)  (cost=0.00..862.05 rows=2 width=23)
+                                              QUERY PLAN                                              
+------------------------------------------------------------------------------------------------------
+ Result  (cost=0.00..862.05 rows=2 width=16)
+   ->  Redistribute Motion 3:3  (slice1; segments: 3)  (cost=0.00..862.00 rows=2 width=16)
          Hash Key: dist_tab_a.a
-         ->  Hash Left Join  (cost=0.00..862.00 rows=1 width=23)
+         ->  Hash Left Join  (cost=0.00..862.00 rows=1 width=16)
                Hash Cond: ((dist_tab_a.a)::bpchar = dist_tab_b.a)
-               ->  Redistribute Motion 3:3  (slice2; segments: 3)  (cost=0.00..431.00 rows=1 width=15)
+               ->  Redistribute Motion 3:3  (slice2; segments: 3)  (cost=0.00..431.00 rows=1 width=8)
                      Hash Key: dist_tab_a.a
-                     ->  Seq Scan on dist_tab_a  (cost=0.00..431.00 rows=1 width=15)
-               ->  Hash  (cost=431.00..431.00 rows=1 width=23)
-                     ->  Seq Scan on dist_tab_b  (cost=0.00..431.00 rows=1 width=23)
- Optimizer: GPORCA
+                     ->  Seq Scan on dist_tab_a  (cost=0.00..431.00 rows=1 width=8)
+               ->  Hash  (cost=431.00..431.00 rows=1 width=16)
+                     ->  Seq Scan on dist_tab_b  (cost=0.00..431.00 rows=1 width=16)
+ Optimizer: Pivotal Optimizer (GPORCA)
 (11 rows)
 
 CREATE TABLE result_tab AS
