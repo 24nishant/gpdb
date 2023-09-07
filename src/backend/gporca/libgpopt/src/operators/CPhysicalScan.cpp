@@ -14,6 +14,7 @@
 #include "gpos/base.h"
 
 #include "gpopt/base/CCastUtils.h"
+#include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/CDistributionSpec.h"
 #include "gpopt/base/CDistributionSpecRandom.h"
 #include "gpopt/base/COptCtxt.h"
@@ -255,6 +256,18 @@ CPhysicalScan::ComputeTableStats(CMemoryPool *mp)
 
 	CColRefSet *pcrsHist = GPOS_NEW(mp) CColRefSet(mp);
 	CColRefSet *pcrsWidth = GPOS_NEW(mp) CColRefSet(mp, m_pdrgpcrOutput);
+
+	// Extracting all used table columns for histogram generation.
+	CColRefSetIter crsiHist(*pcrsWidth);
+	while (crsiHist.Advance())
+	{
+		CColRef *colref = crsiHist.Pcr();
+
+		if (CColRef::EUsed == colref->GetUsage() && !colref->IsSystemCol())
+		{
+			pcrsHist->Include(colref);
+		}
+	}
 
 	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
 	m_pstatsBaseTable =
