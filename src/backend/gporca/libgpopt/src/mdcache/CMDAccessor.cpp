@@ -1144,7 +1144,6 @@ CMDAccessor::Pstats(CMemoryPool *mp, IMDId *rel_mdid, CColRefSet *pcrsHist,
 			GPOS_DELETE(keyColid);
 			GPOS_DELETE(valueWidth);
 		}
-
 	}
 
 	CDouble rows = std::max(DOUBLE(1.0), pmdRelStats->Rows().Get());
