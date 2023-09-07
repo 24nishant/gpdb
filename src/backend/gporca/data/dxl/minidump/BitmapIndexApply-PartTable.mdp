@@ -1628,7 +1628,7 @@ ORDER BY 1 asc ;
     <dxl:Plan Id="0" SpaceSize="35">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="889.240917" Rows="1.000000" Width="8"/>
+          <dxl:Cost StartupCost="0" TotalCost="889.241033" Rows="1.000000" Width="8"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="23" Alias="fivemin">
@@ -1641,7 +1641,7 @@ ORDER BY 1 asc ;
         </dxl:SortingColumnList>
         <dxl:Aggregate AggregationStrategy="Sorted" StreamSafe="false">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="889.240881" Rows="1.000000" Width="8"/>
+            <dxl:Cost StartupCost="0" TotalCost="889.240997" Rows="1.000000" Width="8"/>
           </dxl:Properties>
           <dxl:GroupingColumns>
             <dxl:GroupingColumn ColId="23"/>
@@ -1654,7 +1654,7 @@ ORDER BY 1 asc ;
           <dxl:Filter/>
           <dxl:Sort SortDiscardDuplicates="false">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="889.240871" Rows="1.000000" Width="8"/>
+              <dxl:Cost StartupCost="0" TotalCost="889.240986" Rows="1.000000" Width="8"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="23" Alias="fivemin">
@@ -1669,7 +1669,7 @@ ORDER BY 1 asc ;
             <dxl:LimitOffset/>
             <dxl:RedistributeMotion InputSegments="0,1" OutputSegments="0,1">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="889.240780" Rows="1.000000" Width="8"/>
+                <dxl:Cost StartupCost="0" TotalCost="889.240896" Rows="1.000000" Width="8"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="23" Alias="fivemin">
@@ -1685,7 +1685,7 @@ ORDER BY 1 asc ;
               </dxl:HashExprList>
               <dxl:Result>
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="889.240764" Rows="1.000000" Width="8"/>
+                  <dxl:Cost StartupCost="0" TotalCost="889.240880" Rows="1.000000" Width="8"/>
                 </dxl:Properties>
                 <dxl:ProjList>
                   <dxl:ProjElem ColId="23" Alias="fivemin">
@@ -1705,7 +1705,7 @@ ORDER BY 1 asc ;
                 <dxl:OneTimeFilter/>
                 <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="true" OuterRefAsParam="false">
                   <dxl:Properties>
-                    <dxl:Cost StartupCost="0" TotalCost="889.240760" Rows="1.000000" Width="8"/>
+                    <dxl:Cost StartupCost="0" TotalCost="889.240876" Rows="1.000000" Width="8"/>
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="1" Alias="event_ts">
@@ -1718,7 +1718,7 @@ ORDER BY 1 asc ;
                   </dxl:JoinFilter>
                   <dxl:BroadcastMotion InputSegments="0,1" OutputSegments="0,1">
                     <dxl:Properties>
-                      <dxl:Cost StartupCost="0" TotalCost="431.292687" Rows="840.000000" Width="25"/>
+                      <dxl:Cost StartupCost="0" TotalCost="431.292803" Rows="840.000000" Width="25"/>
                     </dxl:Properties>
                     <dxl:ProjList>
                       <dxl:ProjElem ColId="0" Alias="symbol">
@@ -1732,7 +1732,7 @@ ORDER BY 1 asc ;
                     <dxl:SortingColumnList/>
                     <dxl:TableScan>
                       <dxl:Properties>
-                        <dxl:Cost StartupCost="0" TotalCost="431.008085" Rows="420.000000" Width="25"/>
+                        <dxl:Cost StartupCost="0" TotalCost="431.008200" Rows="420.000000" Width="25"/>
                       </dxl:Properties>
                       <dxl:ProjList>
                         <dxl:ProjElem ColId="0" Alias="symbol">

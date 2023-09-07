@@ -768,7 +768,7 @@ explain select i, count(j) from pt2  where k=5 group by i;
     <dxl:Plan Id="0" SpaceSize="20">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="6.000468" Rows="1.000000" Width="12"/>
+          <dxl:Cost StartupCost="0" TotalCost="6.000490" Rows="1.000000" Width="12"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="i">
@@ -782,7 +782,7 @@ explain select i, count(j) from pt2  where k=5 group by i;
         <dxl:SortingColumnList/>
         <dxl:Aggregate AggregationStrategy="Hashed" StreamSafe="false">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="6.000414" Rows="1.000000" Width="12"/>
+            <dxl:Cost StartupCost="0" TotalCost="6.000436" Rows="1.000000" Width="12"/>
           </dxl:Properties>
           <dxl:GroupingColumns>
             <dxl:GroupingColumn ColId="0"/>
@@ -805,7 +805,7 @@ explain select i, count(j) from pt2  where k=5 group by i;
           <dxl:Filter/>
           <dxl:RedistributeMotion InputSegments="0,1" OutputSegments="0,1">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="6.000289" Rows="1.000000" Width="12"/>
+              <dxl:Cost StartupCost="0" TotalCost="6.000311" Rows="1.000000" Width="12"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="0" Alias="i">
@@ -824,7 +824,7 @@ explain select i, count(j) from pt2  where k=5 group by i;
             </dxl:HashExprList>
             <dxl:Result>
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="6.000266" Rows="1.000000" Width="12"/>
+                <dxl:Cost StartupCost="0" TotalCost="6.000287" Rows="1.000000" Width="12"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="0" Alias="i">
@@ -838,7 +838,7 @@ explain select i, count(j) from pt2  where k=5 group by i;
               <dxl:OneTimeFilter/>
               <dxl:Aggregate AggregationStrategy="Hashed" StreamSafe="true">
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="6.000266" Rows="1.000000" Width="12"/>
+                  <dxl:Cost StartupCost="0" TotalCost="6.000287" Rows="1.000000" Width="12"/>
                 </dxl:Properties>
                 <dxl:GroupingColumns>
                   <dxl:GroupingColumn ColId="0"/>
@@ -861,7 +861,7 @@ explain select i, count(j) from pt2  where k=5 group by i;
                 <dxl:Filter/>
                 <dxl:DynamicIndexScan IndexScanDirection="Forward" SelectorIds="">
                   <dxl:Properties>
-                    <dxl:Cost StartupCost="0" TotalCost="6.000159" Rows="1.000000" Width="24"/>
+                    <dxl:Cost StartupCost="0" TotalCost="6.000181" Rows="1.000000" Width="24"/>
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="0" Alias="i">

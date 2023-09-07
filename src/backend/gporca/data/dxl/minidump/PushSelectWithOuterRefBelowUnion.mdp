@@ -5286,7 +5286,7 @@
     <dxl:Plan Id="0" SpaceSize="8208">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="25984.123228" Rows="60175000.000000" Width="14"/>
+          <dxl:Cost StartupCost="0" TotalCost="25984.189420" Rows="60175000.000000" Width="14"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="15" Alias="l_shipmode">
@@ -5300,7 +5300,7 @@
         <dxl:SortingColumnList/>
         <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="false" OuterRefAsParam="false">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="22201.522728" Rows="60175000.000000" Width="14"/>
+            <dxl:Cost StartupCost="0" TotalCost="22201.588920" Rows="60175000.000000" Width="14"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="15" Alias="l_shipmode">
@@ -5320,9 +5320,9 @@
               </dxl:Comparison>
             </dxl:Or>
           </dxl:JoinFilter>
-          <dxl:DynamicTableScan PartIndexId="1" SelectorIds="">
+          <dxl:DynamicTableScan SelectorIds="">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="433.846277" Rows="60175.000000" Width="14"/>
+              <dxl:Cost StartupCost="0" TotalCost="433.862826" Rows="60175.000000" Width="14"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="13" Alias="l_receiptdate">

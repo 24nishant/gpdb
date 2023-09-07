@@ -675,7 +675,7 @@ where coalesce(t2.fname, t3.fname) is not null;
     <dxl:Plan Id="0" SpaceSize="126">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="1678.285536" Rows="2.250000" Width="8"/>
+          <dxl:Cost StartupCost="0" TotalCost="1678.216543" Rows="2.250000" Width="8"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="26" Alias="fname">
@@ -686,7 +686,7 @@ where coalesce(t2.fname, t3.fname) is not null;
         <dxl:SortingColumnList/>
         <dxl:Aggregate AggregationStrategy="Sorted" StreamSafe="false">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="1678.285455" Rows="2.250000" Width="8"/>
+            <dxl:Cost StartupCost="0" TotalCost="1678.216462" Rows="2.250000" Width="8"/>
           </dxl:Properties>
           <dxl:GroupingColumns>
             <dxl:GroupingColumn ColId="26"/>
@@ -699,7 +699,7 @@ where coalesce(t2.fname, t3.fname) is not null;
           <dxl:Filter/>
           <dxl:Sort SortDiscardDuplicates="false">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="1678.285441" Rows="2.250000" Width="8"/>
+              <dxl:Cost StartupCost="0" TotalCost="1678.216448" Rows="2.250000" Width="8"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="26" Alias="fname">
@@ -714,7 +714,7 @@ where coalesce(t2.fname, t3.fname) is not null;
             <dxl:LimitOffset/>
             <dxl:RedistributeMotion InputSegments="0,1" OutputSegments="0,1">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="1678.285351" Rows="2.250000" Width="8"/>
+                <dxl:Cost StartupCost="0" TotalCost="1678.216357" Rows="2.250000" Width="8"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="26" Alias="fname">
@@ -730,7 +730,7 @@ where coalesce(t2.fname, t3.fname) is not null;
               </dxl:HashExprList>
               <dxl:Aggregate AggregationStrategy="Hashed" StreamSafe="true">
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="1678.285322" Rows="2.250000" Width="8"/>
+                  <dxl:Cost StartupCost="0" TotalCost="1678.216329" Rows="2.250000" Width="8"/>
                 </dxl:Properties>
                 <dxl:GroupingColumns>
                   <dxl:GroupingColumn ColId="26"/>
@@ -743,7 +743,7 @@ where coalesce(t2.fname, t3.fname) is not null;
                 <dxl:Filter/>
                 <dxl:Result>
                   <dxl:Properties>
-                    <dxl:Cost StartupCost="0" TotalCost="1647.285805" Rows="512829.336612" Width="8"/>
+                    <dxl:Cost StartupCost="0" TotalCost="1647.216811" Rows="512829.336612" Width="8"/>
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="26" Alias="fname">
@@ -757,7 +757,7 @@ where coalesce(t2.fname, t3.fname) is not null;
                   <dxl:OneTimeFilter/>
                   <dxl:Result>
                     <dxl:Properties>
-                      <dxl:Cost StartupCost="0" TotalCost="1645.234487" Rows="512829.336612" Width="9"/>
+                      <dxl:Cost StartupCost="0" TotalCost="1645.165494" Rows="512829.336612" Width="9"/>
                     </dxl:Properties>
                     <dxl:ProjList>
                       <dxl:ProjElem ColId="9" Alias="fname">
@@ -780,7 +780,7 @@ where coalesce(t2.fname, t3.fname) is not null;
                     <dxl:OneTimeFilter/>
                     <dxl:HashJoin JoinType="Left">
                       <dxl:Properties>
-                        <dxl:Cost StartupCost="0" TotalCost="1603.054274" Rows="1282073.341530" Width="9"/>
+                        <dxl:Cost StartupCost="0" TotalCost="1602.985281" Rows="1282073.341530" Width="9"/>
                       </dxl:Properties>
                       <dxl:ProjList>
                         <dxl:ProjElem ColId="9" Alias="fname">
@@ -800,7 +800,7 @@ where coalesce(t2.fname, t3.fname) is not null;
                       </dxl:HashCondList>
                       <dxl:HashJoin JoinType="Left">
                         <dxl:Properties>
-                          <dxl:Cost StartupCost="0" TotalCost="1017.464135" Rows="1024598.046689" Width="8"/>
+                          <dxl:Cost StartupCost="0" TotalCost="1017.395141" Rows="1024598.046689" Width="8"/>
                         </dxl:Properties>
                         <dxl:ProjList>
                           <dxl:ProjElem ColId="0" Alias="id">
@@ -843,7 +843,7 @@ where coalesce(t2.fname, t3.fname) is not null;
                         </dxl:TableScan>
                         <dxl:TableScan>
                           <dxl:Properties>
-                            <dxl:Cost StartupCost="0" TotalCost="433.690731" Rows="250884.000000" Width="8"/>
+                            <dxl:Cost StartupCost="0" TotalCost="433.621738" Rows="250884.000000" Width="8"/>
                           </dxl:Properties>
                           <dxl:ProjList>
                             <dxl:ProjElem ColId="8" Alias="id">
