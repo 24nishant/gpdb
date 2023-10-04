@@ -20,6 +20,7 @@
 #include "gpopt/xforms/CXformUtils.h"
 #include "naucrates/md/CMDIndexGPDB.h"
 #include "naucrates/md/CMDRelationGPDB.h"
+#include "gpopt/operators/CLogicalProject.h"
 
 using namespace gpopt;
 using namespace gpmd;
@@ -32,7 +33,7 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformLimit2IndexGet::CXformLimit2IndexGet(CMemoryPool *mp)
+/*CXformLimit2IndexGet::CXformLimit2IndexGet(CMemoryPool *mp)
 	:  // pattern
 	  CXformExploration(
 		  // pattern
@@ -46,6 +47,21 @@ CXformLimit2IndexGet::CXformLimit2IndexGet(CMemoryPool *mp)
 				  mp, GPOS_NEW(mp)
 						  CPatternLeaf(mp))	 // scalar child for number of rows
 			  ))
+{
+}*/
+CXformLimit2IndexGet::CXformLimit2IndexGet(CMemoryPool *mp)
+	:  // pattern
+	  CXformExploration(
+		  // pattern
+		  GPOS_NEW(mp) CExpression( mp, GPOS_NEW(mp) CLogicalLimit(mp),
+								   GPOS_NEW(mp) CExpression(mp,  GPOS_NEW(mp) CLogicalProject(mp),
+															GPOS_NEW(mp) CExpression(mp,GPOS_NEW(mp) CLogicalGet(mp)),  // relational child     - Project child1
+															GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))  // scalar project list - Project child2
+															),  //LIMIT CHILD 1
+								   GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // scalar child for offset  //LIMIT CHILD 2
+								   GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))	 // scalar child for number of rows //LIMIT CHILD 3
+								   )
+	  )
 {
 }
 
@@ -88,14 +104,23 @@ CXformLimit2IndexGet::Transform(CXformContext *pxfctxt, CXformResult *pxfres,
 	CMemoryPool *mp = pxfctxt->Pmp();
 
 	CLogicalLimit *popLimit = CLogicalLimit::PopConvert(pexpr->Pop());
-	// extract components
-	CExpression *pexprRelational = (*pexpr)[0];
-	CExpression *pexprScalarOffset = (*pexpr)[1];
-	CExpression *pexprScalarRows = (*pexpr)[2];
 
-	CLogicalGet *popGet = CLogicalGet::PopConvert(pexprRelational->Pop());
+	// 1. extract components
+	CExpression *pexprLogicalProject = (*pexpr)[0];	 // Logical Project
+	CExpression *pexprScalarOffset = (*pexpr)[1];	 // Scalar Offset
+	CExpression *pexprScalarRows = (*pexpr)[2];		 // Scalar Rows
+
+
+	CLogicalProject *popProject =
+		CLogicalProject::PopConvert(pexprLogicalProject->Pop());
+
+	// 2. Transforming Logical Get to Index Get.
+	CExpression *pexprGet = (*pexprLogicalProject)[0];
+	CLogicalGet *popGet = CLogicalGet::PopConvert(pexprGet->Pop());
+
 	// get the indices count of this relation
 	const ULONG ulIndices = popGet->Ptabdesc()->IndexCount();
+
 	// Ignore xform if relation doesn't have any indices
 	if (0 == ulIndices)
 	{
@@ -109,67 +134,75 @@ CXformLimit2IndexGet::Transform(CXformContext *pxfctxt, CXformResult *pxfres,
 		return;
 	}
 
-	CExpression *boolConstExpr = nullptr;
-	boolConstExpr = CUtils::PexprScalarConstBool(mp, true);
+	// 2.1 Collecting index conditions
+	CExpression *pexprScalarProjList = (*pexprLogicalProject)[1];
 
-	CExpressionArray *pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
-	boolConstExpr->AddRef();
-	pdrgpexpr->Append(boolConstExpr);
+	// Check if query has condition on one column only.
+	if (pexprScalarProjList->Arity() != 1)
+	{
+		return;
+	}
 
-	popGet->AddRef();
-	CExpression *pexprUpdtdRltn =
-		GPOS_NEW(mp) CExpression(mp, popGet, boolConstExpr);
+	CExpression *pexprProjElem = (*pexprScalarProjList)[0];
+	CExpression *pexprScalarOp = (*pexprProjElem)[0];
 
-	CColRefSet *pcrsScalarExpr = popLimit->PcrsLocalUsed();
+	// Add a condition on the operator ID, it should be L2 distace only
+	// else return ??
+	pexprScalarOp->AddRef();
+	CExpressionArray *pdrgpexprConds = GPOS_NEW(mp) CExpressionArray(mp);
+	pdrgpexprConds->Append(pexprScalarOp);
+	GPOS_ASSERT(pdrgpexprConds->Size() > 0);
 
-	// find the indexes whose included columns meet the required columns
+	// 2.2 Collect used colrefs
+	CColRefSet *pcrsScalarExpr = pexprScalarOp->DeriveUsedColumns();
+
+
+	// 2.3 Other info for Index Get
+
+
+	// Iterate through all the table indices and generate 'IndexGet'
 	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
 	const IMDRelation *pmdrel =
 		md_accessor->RetrieveRel(popGet->Ptabdesc()->MDId());
-	CColRefArray *pdrgpcrIndexColumns = nullptr;
 
 	for (ULONG ul = 0; ul < ulIndices; ul++)
 	{
 		IMDId *pmdidIndex = pmdrel->IndexMDidAt(ul);
 		const IMDIndex *pmdindex = md_accessor->RetrieveIndex(pmdidIndex);
-		// get columns in the index
-		pdrgpcrIndexColumns = CXformUtils::PdrgpcrIndexKeys(
-			mp, popGet->PdrgpcrOutput(), pmdindex, pmdrel);
-		// Check if index is applicable and get Scan direction
-		EIndexScanDirection scan_direction =
-			GetScanDirection(pos, pdrgpcrIndexColumns, pmdindex);
-		// Proceed if index is applicable
-		if (scan_direction != EisdSentinel)
+
+		EIndexScanDirection scan_direction = EForwardScan;
+		// pcrsScalarExpr->AddRef();
+		// build IndexGet expression
+		CExpression *pexprIndexGet = CXformUtils::PexprLogicalIndexGet(
+			mp, md_accessor, pexprGet, popProject->UlOpId(), pdrgpexprConds,
+			pcrsScalarExpr, nullptr /*outer_refs*/, pmdindex, pmdrel, true,
+			scan_direction);
+
+		if (pexprIndexGet != nullptr)
 		{
-			// build IndexGet expression
-			CExpression *pexprIndexGet = CXformUtils::PexprLogicalIndexGet(
-				mp, md_accessor, pexprUpdtdRltn, popLimit->UlOpId(), pdrgpexpr,
-				pcrsScalarExpr, nullptr /*outer_refs*/, pmdindex, pmdrel, true,
-				scan_direction);
+			popProject->AddRef();
+			pexprScalarProjList->AddRef();
+			//pexprIndexGet->AddRef();
+			CExpression *pexprLogicalProjectFinal = GPOS_NEW(mp)
+				CExpression(mp, popProject, pexprIndexGet, pexprScalarProjList);
 
-			if (pexprIndexGet != nullptr)
-			{
-				pexprScalarOffset->AddRef();
-				pexprScalarRows->AddRef();
-				pos->AddRef();
+			//pexprLogicalProjectFinal->AddRef();
+			pexprScalarOffset->AddRef();
+			pexprScalarRows->AddRef();
+			pos->AddRef();
+			CExpression *pexprLimit = GPOS_NEW(mp) CExpression(
+				mp,
+				GPOS_NEW(mp) CLogicalLimit(
+					mp, pos, popLimit->FGlobal(), popLimit->FHasCount(),
+					popLimit->IsTopLimitUnderDMLorCTAS()),
+				pexprLogicalProjectFinal, pexprScalarOffset, pexprScalarRows);
 
-				// build Limit expression
-				CExpression *pexprLimit = GPOS_NEW(mp) CExpression(
-					mp,
-					GPOS_NEW(mp)
-						CLogicalLimit(mp, pos, popLimit->FGlobal(),	 // fGlobal
-									  popLimit->FHasCount(),
-									  popLimit->IsTopLimitUnderDMLorCTAS()),
-					pexprIndexGet, pexprScalarOffset, pexprScalarRows);
-
-				pxfres->Add(pexprLimit);
-			}
+			pxfres->Add(pexprLimit);
+			//pexprLogicalProjectFinal->Release();
 		}
-		pdrgpcrIndexColumns->Release();
 	}
 
-	pdrgpexpr->Release();
-	pexprUpdtdRltn->Release();
+	pdrgpexprConds->Release();
 }
 
 //---------------------------------------------------------------------------

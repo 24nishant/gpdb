@@ -1014,9 +1014,13 @@ CTranslatorRelcacheToDXL::RetrieveIndex(CMemoryPool *mp,
 		case GIST_AM_OID:
 			index_type = IMDIndex::EmdindGist;
 			break;
+	//	case IVFFLAT_AM_OID:
+	//		index_type = IMDIndex::EmdindIVFFlat;
+	//		break;
 		default:
-			GPOS_RAISE(gpdxl::ExmaMD, gpdxl::ExmiMDObjUnsupported,
-					   GPOS_WSZ_LIT("Index access method"));
+			index_type = IMDIndex::EmdindIVFFlat;
+		//	GPOS_RAISE(gpdxl::ExmaMD, gpdxl::ExmiMDObjUnsupported,
+		//			   GPOS_WSZ_LIT("Index access method"));
 	}
 
 	// get the index name
@@ -2769,15 +2773,19 @@ CTranslatorRelcacheToDXL::IsIndexSupported(Relation index_rel)
 	HeapTupleData *tup = index_rel->rd_indextuple;
 
 	// index expressions and index constraints not supported
-	BOOL index_supported = gpdb::HeapAttIsNull(tup, Anum_pg_index_indexprs) &&
-						   gpdb::HeapAttIsNull(tup, Anum_pg_index_indpred) &&
-						   index_rel->rd_index->indisvalid &&
-						   (BTREE_AM_OID == index_rel->rd_rel->relam ||
-							HASH_AM_OID == index_rel->rd_rel->relam ||
-							BITMAP_AM_OID == index_rel->rd_rel->relam ||
-							GIST_AM_OID == index_rel->rd_rel->relam ||
-							GIN_AM_OID == index_rel->rd_rel->relam ||
-							BRIN_AM_OID == index_rel->rd_rel->relam);
+	/*BOOL index_supported =
+		gpdb::HeapAttIsNull(tup, Anum_pg_index_indexprs) &&
+		gpdb::HeapAttIsNull(tup, Anum_pg_index_indpred) &&
+		index_rel->rd_index->indisvalid &&
+		(BTREE_AM_OID == index_rel->rd_rel->relam ||
+		 HASH_AM_OID == index_rel->rd_rel->relam ||
+		 BITMAP_AM_OID == index_rel->rd_rel->relam ||
+		 GIST_AM_OID == index_rel->rd_rel->relam ||
+		 GIN_AM_OID == index_rel->rd_rel->relam ||
+		 BRIN_AM_OID == index_rel->rd_rel->relam ||
+		 (403 == index_rel->rd_rel->relam) ||
+		 (17383 == index_rel->rd_rel->relam));	//delete 17365 */
+	BOOL index_supported = true;
 	if (index_supported)
 	{
 		return true;

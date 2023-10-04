@@ -2461,8 +2461,11 @@ CXformUtils::PexprBuildBtreeIndexPlan(
 			GPOS_NEW(mp) CWStringConst(mp, popGet->Name().Pstr()->GetBuffer());
 	}
 
+//	if (!FIndexApplicable(mp, pmdindex, pmdrel, pdrgpcrOutput, pcrsScalarExpr,
+//						  IMDIndex::EmdindBtree))
 	if (!FIndexApplicable(mp, pmdindex, pmdrel, pdrgpcrOutput, pcrsScalarExpr,
-						  IMDIndex::EmdindBtree))
+					  IMDIndex::EmdindIVFFlat))
+
 	{
 		GPOS_DELETE(alias);
 

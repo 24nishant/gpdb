@@ -1935,14 +1935,14 @@ CExpression *
 CPredicateUtils::PexprIndexLookupKeyOnLeft(
 	CMemoryPool *mp, CMDAccessor *md_accessor, CExpression *pexprScalar,
 	const IMDIndex *pmdindex, CColRefArray *pdrgpcrIndex,
-	CColRefSet *outer_refs, BOOL allowArrayCmpIndexQual)
+	CColRefSet *outer_refs, BOOL allowArrayCmpIndexQual) //false by default
 {
 	GPOS_ASSERT(nullptr != pexprScalar);
 
 	CExpression *pexprLeft = (*pexprScalar)[0];
 	CExpression *pexprRight = (*pexprScalar)[1];
 
-	CColRefSet *pcrsIndex = GPOS_NEW(mp) CColRefSet(mp, pdrgpcrIndex);
+	CColRefSet *pcrsIndex = GPOS_NEW(mp) CColRefSet(mp, pdrgpcrIndex); //Index key colrefs
 	if (!allowArrayCmpIndexQual &&
 		IMDIndex::EmdindBtree == pmdindex->IndexType() &&
 		CUtils::FScalarArrayCmp(pexprScalar) &&
@@ -2048,7 +2048,7 @@ CPredicateUtils::PexprIndexLookup(CMemoryPool *mp, CMDAccessor *md_accessor,
 								  BOOL allowArrayCmpIndexQual)
 {
 	GPOS_ASSERT(nullptr != pexprScalar);
-	GPOS_ASSERT(nullptr != pdrgpcrIndex);
+	GPOS_ASSERT(nullptr != pdrgpcrIndex); // Index key colrefs.
 
 	IMDType::ECmpType cmptype = IMDType::EcmptOther;
 
@@ -2174,6 +2174,7 @@ CPredicateUtils::ExtractIndexPredicates(
 			CExpression *pexprLookupPred = PexprIndexLookup(
 				mp, md_accessor, pexprCond, pmdindex, pdrgpcrIndex,
 				pcrsAcceptedOuterRefs, allowArrayCmpIndexQual);
+			pexprLookupPred =pexprCond;
 			if (nullptr != pexprLookupPred)
 			{
 				pexprCond->Release();

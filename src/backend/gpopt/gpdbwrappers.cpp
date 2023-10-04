@@ -2088,8 +2088,11 @@ gpdb::IndexOpProperties(Oid opno, Oid opfamily, StrategyNumber *strategynumber,
 		Oid lefttype;
 		INT strategy;
 
-		get_op_opfamily_properties(opno, opfamily, false, &strategy, &lefttype,
-								   righttype);
+		//get_op_opfamily_properties(opno, opfamily, false, &strategy, &lefttype,
+		//						   righttype);
+
+		get_op_opfamily_properties(opno, opfamily, true, &strategy, &lefttype,
+															  righttype);
 
 		// Ensure the value of strategy doesn't get truncated when converted to StrategyNumber
 		GPOS_ASSERT(strategy >= 0 &&
