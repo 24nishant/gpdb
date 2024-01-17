@@ -401,7 +401,7 @@ static void av_sighup_handler(SIGNAL_ARGS);
 static void avl_sigusr2_handler(SIGNAL_ARGS);
 static void avl_sigterm_handler(SIGNAL_ARGS);
 static void autovac_refresh_stats(void);
-
+static void addAttachedDetachedPartitions(List* table_oids);
 
 
 /********************************************************************
@@ -2011,7 +2011,77 @@ get_database_list(void)
 
 	return dblist;
 }
+static void addAttachedDetachedPartitions(List* table_oids)
+{
+	/*
+	 * Perform additional work items, as requested by backends.
+	 */
+	int i;
+	LWLockAcquire(AutovacuumLock, LW_EXCLUSIVE);
+	for (i = 0; i < NUM_WORKITEMS; i++)
+	{
+		AutoVacuumWorkItem *workitem = &AutoVacuumShmem->av_workItems[i];
 
+		if (workitem->avw_type != AVW_UpdateRootPartitionStats)
+			continue;
+		if (!workitem->avw_used)
+			continue;
+		if (workitem->avw_active)
+			continue;
+		if (workitem->avw_database != MyDatabaseId)
+			continue;
+
+		/* claim this one, and release lock while performing it */
+		workitem->avw_active = true;
+		LWLockRelease(AutovacuumLock);
+
+		/* Perform work */
+		Oid relOid = workitem->avw_relation;
+		Oid root_parent_relid = get_top_level_partition_root(relOid);
+		Relation rel = RelationIdGetRelation(relOid);
+
+		if (!OidIsValid(root_parent_relid))
+		{
+			if (!rel->rd_rel->relispartition)
+			{
+				/*
+				 * If the root is checked for the top level partition
+				 * InvalidOid will be returned.
+				 * Eg - Leaf partition is attached to root, in this case
+				 * rel->rd_id will be of the root.
+				 */
+				root_parent_relid = relOid;
+			}
+			else
+			{
+				/*
+				 * Invalid OID return
+				 */
+				continue;
+			}
+		}
+
+		table_oids = lappend_oid(table_oids, root_parent_relid);
+
+		/*
+		 * Check for config changes before acquiring lock for further jobs.
+		 */
+		CHECK_FOR_INTERRUPTS();
+		if (got_SIGHUP)
+		{
+			got_SIGHUP = false;
+			ProcessConfigFile(PGC_SIGHUP);
+		}
+
+		LWLockAcquire(AutovacuumLock, LW_EXCLUSIVE);
+
+		/* and mark it done */
+		workitem->avw_active = false;
+		workitem->avw_used = false;
+	}
+	LWLockRelease(AutovacuumLock);
+
+}
 /*
  * Process a database table-by-table
  *
@@ -2041,7 +2111,7 @@ do_autovacuum(void)
 	int			i;
 	HASH_SEQ_STATUS roots_hash_seq;
 	Oid* top_level_root;
-
+//        pg_usleep(45000000);
 	/*
 	 * GPDB: For partitioned tables, since we maintain top-level-root stats in
 	 * the catalog, we have to merge stats whenever a leaf partition(s)
@@ -2461,6 +2531,14 @@ do_autovacuum(void)
 
 	hash_destroy(top_level_partition_roots);
 	hash_destroy(sessionhash);
+
+	/*
+	 * Add any newly attached/detached partitions to the list of table Oids
+	 * since the last AutoVacuum run. This will ensure, that the corresponding
+	 * root stats are updated for these changes.
+	 */
+	addAttachedDetachedPartitions(table_oids);
+
 	/*
 	 * Perform operations on collected tables.
 	 */
@@ -2832,6 +2910,11 @@ perform_work_item(AutoVacuumWorkItem *workitem)
 									ObjectIdGetDatum(workitem->avw_relation),
 									Int64GetDatum((int64) workitem->avw_blockNumber));
 				break;
+
+			case AVW_UpdateRootPartitionStats:
+				// DirectFunctionCall1(update_root_stats, ObjectIdGetDatum(workitem->avw_relation));
+				break;
+
 			default:
 				elog(WARNING, "unrecognized work item found: type %d",
 					 workitem->avw_type);
@@ -3399,6 +3482,11 @@ autovac_report_workitem(AutoVacuumWorkItem *workitem,
 		case AVW_BRINSummarizeRange:
 			snprintf(activity, MAX_AUTOVAC_ACTIV_LEN,
 					 "autovacuum: BRIN summarize");
+			break;
+
+		case AVW_UpdateRootPartitionStats:
+			snprintf(activity, MAX_AUTOVAC_ACTIV_LEN,
+					 "autovacuum: Root partition stats update");
 			break;
 	}
 

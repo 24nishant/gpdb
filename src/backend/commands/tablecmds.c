@@ -5860,8 +5860,11 @@ ATExecCmd(List **wqueue, AlteredTableInfo *tab, Relation rel,
 					 * 2. Aim is to merge root stats
 					 * iff, all the existing leafs are
 					 * analyzed.
+					 *
+					 * 3. A work item request is added
+					 * for the next autovacuum run.
 					 */
-					update_root_stats(rel, cmd);
+					addAutoVacuumRequest(rel);
 				}
 			}
 
@@ -5883,10 +5886,13 @@ ATExecCmd(List **wqueue, AlteredTableInfo *tab, Relation rel,
 			{
 
 				/*
-				 * Check and update root stats
+				 * 1. Check and update root stats
 				 * after detaching partition.
+				 *
+				 * 2. A work item request is added
+				 * for the next autovacuum run.
 				 */
-				update_root_stats(rel, cmd);
+				addAutoVacuumRequest(rel);
 
 			}
 			break;

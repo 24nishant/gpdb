@@ -1311,13 +1311,15 @@ leaf_parts_analyzed(Oid attrelid, Oid relid_exclude, List *va_cols, int elevel)
  *
  * Helper function to issue analyze command on a specific relation.
  */
-void update_root_stats(Relation rel, AlterTableCmd *cmd)
+Datum update_root_stats(PG_FUNCTION_ARGS)
 {
 	/*
 	 * Update stats iff, all the existing
 	 * leaf partitions are analyzed.
 	 */
-	Oid root_parent_relid = get_top_level_partition_root(rel->rd_id);
+	Oid relOid = PG_GETARG_OID(0);
+	Oid root_parent_relid = get_top_level_partition_root(relOid);
+	Relation rel= RelationIdGetRelation(relOid);
 	if (!OidIsValid(root_parent_relid))
 	{
 		if (!rel->rd_rel->relispartition)
@@ -1328,14 +1330,14 @@ void update_root_stats(Relation rel, AlterTableCmd *cmd)
 			 * Eg - Leaf partition is attached to root, in this case
 			 * rel->rd_id will be of the root.
 			 */
-			root_parent_relid = rel->rd_id;
+			root_parent_relid = relOid;
 		}
 		else
 		{
 			/*
 			 * Invalid OID return
 			 */
-			return;
+			PG_RETURN_DATUM(0);
 		}
 	}
 
@@ -1368,5 +1370,20 @@ void update_root_stats(Relation rel, AlterTableCmd *cmd)
 
 		free_parsestate(pstate);
 		pfree(analyzeStmt);
+		PG_RETURN_DATUM(1);
 	}
+	PG_RETURN_DATUM(0);
+}
+
+void addAutoVacuumRequest(Relation rel)
+{
+	bool	recorded;
+
+	recorded = AutoVacuumRequestWork(AVW_UpdateRootPartitionStats, rel->rd_id, InvalidBlockNumber);
+
+	if (!recorded)
+		ereport(LOG,
+			(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
+			 errmsg(" Worker add request for  \"%s\" was not recorded",
+			 get_rel_name(rel->rd_id))));
 }

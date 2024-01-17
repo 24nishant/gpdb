@@ -13,6 +13,7 @@
 #define ANALYZEUTILS_H
 
 #include "commands/vacuum.h"
+#include "fmgr.h"
 
 typedef struct TypInfo
 {
@@ -59,6 +60,7 @@ extern bool needs_sample(Relation rel, VacAttrStats **vacattrstats, int attr_cnt
 extern AttrNumber fetch_leaf_attnum(Oid leafRelid, const char* attname);
 extern HeapTuple fetch_leaf_att_stats(Oid leafRelid, AttrNumber leafAttNum);
 extern bool leaf_parts_analyzed(Oid attrelid, Oid relid_exclude, List *va_cols, int elevel);
-extern void update_root_stats(Relation rel, AlterTableCmd *cmd);
+extern Datum update_root_stats(PG_FUNCTION_ARGS);
+extern void addAutoVacuumRequest(Relation rel);
 
 #endif  /* ANALYZEUTILS_H */
