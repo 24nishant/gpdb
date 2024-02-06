@@ -14574,11 +14574,12 @@ EXPLAIN (COSTS OFF) SELECT (
                                  ->  Hash Join
                                        Hash Cond: (join_null_rej1.i = join_null_rej2.i)
                                        ->  Seq Scan on join_null_rej1
+                                             Filter: (i < 5)
                                        ->  Hash
                                              ->  Seq Scan on join_null_rej2
-                                                   Filter: (i < join_null_rej_func())
+                                                   Filter: (i < 5)
  Optimizer: Pivotal Optimizer (GPORCA)
-(15 rows)
+(16 rows)
 
 -- Optional, but let's check we get same result for both, folded and
 -- not folded join_null_rej_func() function.
