@@ -249,7 +249,7 @@ CTranslatorQueryToDXL::QueryToDXLInstance(CMemoryPool *mp,
 		CTranslatorQueryToDXL(context, md_accessor,
 							  nullptr,	// var_colid_mapping,
 							  query,
-							  0,	   // query_level
+							  1,	   // query_level 1 for outermost query
 							  false,   // is_top_query_dml
 							  nullptr  // query_level_to_cte_map
 		);
