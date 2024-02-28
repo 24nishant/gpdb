@@ -21,6 +21,7 @@ extern "C" {
 #include "utils/date.h"
 #include "utils/datum.h"
 #include "utils/uuid.h"
+#include "optimizer/clauses.h"
 }
 
 #include <vector>
@@ -47,6 +48,7 @@ extern "C" {
 #include "naucrates/md/IMDAggregate.h"
 #include "naucrates/md/IMDScalarOp.h"
 #include "naucrates/md/IMDType.h"
+#include "nodes/relation.h"
 
 using namespace gpdxl;
 using namespace gpopt;
@@ -112,6 +114,9 @@ CTranslatorScalarToDXL::CreateSubqueryTranslator(
 		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiQuery2DXLError,
 				   GPOS_WSZ_LIT("Subquery in a stand-alone expression"));
 	}
+
+	// Check in the query tree if we can fold any constant expression
+	subquery = FoldConstantsWrapper(subquery, m_query_level + 1);
 
 	return GPOS_NEW(m_context->m_mp)
 		CTranslatorQueryToDXL(m_context, m_md_accessor, var_colid_mapping,
@@ -2442,6 +2447,53 @@ CTranslatorScalarToDXL::CreateIDatumFromGpdbDatum(CMemoryPool *mp,
 	IDatum *datum = md_type->GetDatumForDXLDatum(mp, datum_dxl);
 	datum_dxl->Release();
 	return datum;
+}
+
+
+//---------------------------------------------------------------------------
+//	@function:
+//		CTranslatorScalarToDXL::FoldConstantsWrapper
+//
+//	@doc:
+//		Perform folding of functions for the given query
+//---------------------------------------------------------------------------
+Query *
+CTranslatorScalarToDXL::FoldConstantsWrapper(Query *subquery, Index query_level)
+{
+	PlannerInfo *root;
+	PlannerGlobal *glob;
+
+	// Initialize a dummy PlannerGlobal struct.
+
+	glob = makeNode(PlannerGlobal);
+	glob->subplans = NIL;
+	glob->subroots = NIL;
+	glob->rewindPlanIDs = NULL;
+	glob->transientPlan = false;
+	glob->oneoffPlan = false;
+	glob->share.producers = NULL;
+	glob->share.producer_count = 0;
+	glob->share.sliceMarks = NULL;
+	glob->share.motStack = NIL;
+	glob->share.qdShares = NIL;
+	glob->share.qdSlices = NIL;
+	glob->share.nextPlanId = 0;
+	glob->finalrtable = NIL;
+	glob->subplans = NIL;
+	glob->relationOids = NIL;
+	glob->invalItems = NIL;
+	glob->nParamExec = 0;
+
+	root = makeNode(PlannerInfo);
+	root->parse = subquery;
+	root->glob = glob;
+	root->query_level = query_level;
+	root->planner_cxt = CurrentMemoryContext;
+	root->wt_param_id = -1;
+
+
+	return fold_constants(root, subquery, nullptr,
+						  GPOPT_MAX_FOLDED_CONSTANT_SIZE);
 }
 
 // EOF
