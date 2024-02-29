@@ -14379,6 +14379,8 @@ EXPLAIN (COSTS OFF) SELECT (
     LEFT JOIN join_null_rej2 t2 ON t1.i = t2.i
     WHERE t2.i < join_null_rej_func()
 );
+INFO:  Worker is already registered! This is an invalid state, please report this error. (_api.cpp:159)
+INFO:  GPORCA failed to produce a plan, falling back to Postgres-based planner
                                  QUERY PLAN                                 
 ----------------------------------------------------------------------------
  Nested Loop Left Join
@@ -14390,11 +14392,12 @@ EXPLAIN (COSTS OFF) SELECT (
                      ->  Hash Join
                            Hash Cond: (join_null_rej1.i = join_null_rej2.i)
                            ->  Seq Scan on join_null_rej1
+                                 Filter: (i < 5)
                            ->  Hash
                                  ->  Seq Scan on join_null_rej2
-                                       Filter: (i < join_null_rej_func())
- Optimizer: Pivotal Optimizer (GPORCA)
-(13 rows)
+                                       Filter: (i < 5)
+ Optimizer: GPORCA
+(14 rows)
 
 -- Optional, but let's check we get same result for both, folded and
 -- not folded join_null_rej_func() function.

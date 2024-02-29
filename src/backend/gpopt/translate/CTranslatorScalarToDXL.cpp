@@ -19,10 +19,10 @@ extern "C" {
 #include "nodes/parsenodes.h"
 #include "nodes/plannodes.h"
 #include "nodes/primnodes.h"
+#include "optimizer/clauses.h"
 #include "utils/date.h"
 #include "utils/datum.h"
 #include "utils/uuid.h"
-#include "optimizer/clauses.h"
 }
 
 #include <vector>
@@ -2681,13 +2681,13 @@ CTranslatorScalarToDXL::FoldConstantsWrapper(Query *subquery, Index query_level)
 	glob = makeNode(PlannerGlobal);
 	glob->subplans = NIL;
 	glob->subroots = NIL;
-	glob->rewindPlanIDs = NULL;
+	glob->rewindPlanIDs = nullptr;
 	glob->transientPlan = false;
 	glob->oneoffPlan = false;
-	glob->share.shared_inputs = NULL;
+	glob->share.shared_inputs = nullptr;
 	glob->share.shared_input_count = 0;
 	glob->share.motStack = NIL;
-	glob->share.qdShares = NULL;
+	glob->share.qdShares = nullptr;
 	glob->finalrtable = NIL;
 	glob->relationOids = NIL;
 	glob->invalItems = NIL;
